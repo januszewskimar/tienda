@@ -1,0 +1,42 @@
+version: "3.9"
+   
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./datos_bd:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=tienda
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
+      - PGADMIN_DEFAULT_PASSWORD=pass
+      - PGADMIN_LISTEN_PORT=80
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - 8001:80
+
+
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/code
+    ports:
+      - 80:3000
+
