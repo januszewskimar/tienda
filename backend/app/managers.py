@@ -1,7 +1,18 @@
 from django.contrib.auth.models import BaseUserManager
+from .models import Usuario
 
 class GestorUsuarios(BaseUserManager):
     use_in_migrations = True
+    
+    def authenticate(self, request, **extra_fields):
+        email = extra_fields['email']
+        password = extra_fields['password']
+        try:
+            usuario = Usuario.objects.get(email=email)
+            if usuario.check_password(password) is True:
+                return usuario
+        except Usuario.DoesNotExist:
+            pass
 
     def _create_user(self, email, password, **extra_fields):
         if not email:

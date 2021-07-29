@@ -13,7 +13,6 @@ class Usuarios(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format='json'):
-        print(request.data)
         serializador = SerializadorUsuario(data=request.data)
         if serializador.is_valid():
             if Usuario.objects.filter(email=serializador.validated_data['email']).count() == 1:
@@ -24,3 +23,11 @@ class Usuarios(APIView):
                     json = serializador.data
                     return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UsuarioSesionIniciada(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format='json'):
+        serializer = SerializadorUsuario(request.user)
+        return Response(serializer.data)
