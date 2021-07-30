@@ -1,8 +1,11 @@
+import { withRouter } from "react-router-dom";
 import React, { Component } from "react";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
+import Button from 'react-bootstrap/Button'
 import { LinkContainer } from "react-router-bootstrap";
 import axiosInstance from "../axiosApi";
+
 
 
 
@@ -20,17 +23,26 @@ class Cabecera extends Component {
         axiosInstance.get('/usuario-sesion-iniciada/').then(
             result => {
                 this.setState( { nombre: result.data.first_name, apellidos: result.data.last_name } )
-                if (this.props.sesionIniciada == false){
-                    this.props.setSesionIniciada(true)
-                }
+                this.props.setSesionIniciada(true)
             }
         ).catch (error => {
-                if (error.response.status == 401){
-                    if (this.props.sesionIniciada == true){
-                        this.props.setSesionIniciada(false)
-                    }
+                if (error.response.status === 401){
+                    this.props.setSesionIniciada(false)
                 }
             })
+    }
+
+    cerrarSesion = () => {
+        axiosInstance.post('/token/invalidar/', {
+            "refresh_token": localStorage.getItem("refresh_token")
+        }).then( result => {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            axiosInstance.defaults.headers['Authorization'] = null;
+            this.props.setSesionIniciada(false);
+        }).catch (error => {
+            console.log(error);
+        })
     }
 
     render(){
@@ -44,7 +56,8 @@ class Cabecera extends Component {
         }
         else{
             parteDerecha = <>
-                                Sesión iniciada como: {this.state.nombre} {this.state.apellidos}
+                                <Navbar.Text className="mr-2">Sesión iniciada como: {this.state.nombre} {this.state.apellidos}</Navbar.Text>
+                                <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
                            </>
         }
         return (
@@ -64,7 +77,7 @@ class Cabecera extends Component {
     }
 }
 
-export default Cabecera;
+export default withRouter(Cabecera);
 
 
 

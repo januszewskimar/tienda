@@ -8,4 +8,5 @@ urlpatterns = [
     path('usuario-sesion-iniciada/', views.UsuarioSesionIniciada.as_view(), name='usuario_sesion_iniciada'),
     path('token/obtener/', jwt_views.TokenObtainPairView.as_view(), name='crear_token'),
     path('token/refrescar/', jwt_views.TokenRefreshView.as_view(), name='refrescar_token'),
+    path('token/invalidar/', views.InvalidarToken.as_view(), name='invalidar_token'),
 ]
