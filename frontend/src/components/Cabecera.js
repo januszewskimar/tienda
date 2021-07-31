@@ -26,10 +26,10 @@ class Cabecera extends Component {
                 this.props.setSesionIniciada(true)
             }
         ).catch (error => {
-                if (error.response.status === 401){
-                    this.props.setSesionIniciada(false)
-                }
-            })
+            if (error.response.status === 401){
+                this.props.setSesionIniciada(false)
+            }
+        })
     }
 
     cerrarSesion = () => {
@@ -55,8 +55,11 @@ class Cabecera extends Component {
                            </>
         }
         else{
+            let nombreCompleto = this.state.nombre + ' ' + this.state.apellidos
             parteDerecha = <>
-                                <Navbar.Text className="mr-2">Sesión iniciada como: {this.state.nombre} {this.state.apellidos}</Navbar.Text>
+                                <Navbar.Text className="mr-2">
+                                    Sesión iniciada como: <LinkContainer to="/usuario/info"><a>{nombreCompleto}</a></LinkContainer>
+                                </Navbar.Text>
                                 <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
                            </>
         }

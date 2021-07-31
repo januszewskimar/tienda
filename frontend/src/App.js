@@ -4,6 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import Registro from "./components/Registro";
 import InicioSesion from "./components/InicioSesion";
 import Cabecera from "./components/Cabecera";
+import UsuarioInfo from "./components/UsuarioInfo";
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -32,6 +33,9 @@ class App extends Component {
                     <Route exact path={"/registro/"} component={Registro}/>
                     <Route exact path={"/inicio-sesion/"}>
                         <InicioSesion setSesionIniciada={this.setSesionIniciada}/>
+                    </Route>
+                    <Route exact path={"/usuario/info"}>
+                        <UsuarioInfo setSesionIniciada={this.setSesionIniciada}/>
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>
