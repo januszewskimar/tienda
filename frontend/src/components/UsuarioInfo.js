@@ -1,9 +1,13 @@
 import React, { Component} from "react";
 import { withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axiosInstance from "../axiosApi";
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+
+
 
 class UsuarioInfo extends Component {
     constructor(props) {
@@ -77,8 +81,12 @@ class UsuarioInfo extends Component {
                             <Form.Control plaintext readOnly defaultValue={this.state.tipo} />
                         </Col>
                     </Form.Group>
-            </Form>
-        </>
+                </Form>
+
+                <Link to="/usuario/editar">
+                    <Button variant="primary" className="mt-3">Modificar datos</Button>
+                </Link>
+            </>
         );
     }
 

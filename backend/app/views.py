@@ -25,6 +25,33 @@ class Usuarios(APIView):
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+class UsuariosId(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def put(self, request, id, format='json'):
+        if request.user.id != int(id):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            usuario = Usuario.objects.get(id=id)
+            if "email" in request.data:
+                if usuario.email != request.data['email']:
+                    if Usuario.objects.filter(email=request.data['email']).count() == 1:
+                        return Response(status=status.HTTP_409_CONFLICT)
+                usuario.email = request.data['email']
+            if "first_name" in request.data:
+                usuario.first_name = request.data['first_name']
+            if "last_name" in request.data:
+                usuario.last_name = request.data['last_name']
+
+            try:
+                usuario.save()
+                return Response(status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+
+
 class UsuarioSesionIniciada(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
