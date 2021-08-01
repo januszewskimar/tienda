@@ -30,15 +30,18 @@ class Cabecera extends Component {
 
         if (this.props.usuarioLogueado === null){
             parteDerecha =  <>
-                                <LinkContainer to="/inicio-sesion"><Nav.Link>Iniciar sesión</Nav.Link>
-                                </LinkContainer><LinkContainer to="/registro"><Nav.Link>Registrarse</Nav.Link></LinkContainer>
+                                <LinkContainer to="/inicio-sesion"><Nav.Link>Iniciar sesión</Nav.Link></LinkContainer>
+                                <LinkContainer to="/registro"><Nav.Link>Registrarse</Nav.Link></LinkContainer>
                            </>
         }
         else{
             let nombreCompleto = this.props.usuarioLogueado['first_name'] + ' ' + this.props.usuarioLogueado['last_name']
             parteDerecha = <>
                                 <Navbar.Text className="mr-2">
-                                    Sesión iniciada como: <LinkContainer to="/usuario/info"><a>{nombreCompleto}</a></LinkContainer>
+                                    Sesión iniciada como:
+                                    <LinkContainer to="/usuario/info">
+                                        <Button variant="link">{nombreCompleto}</Button>
+                                    </LinkContainer>
                                 </Navbar.Text>
                                 <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
                            </>
