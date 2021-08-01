@@ -16,8 +16,8 @@ class Registro extends Component{
             first_name:"",
             last_name:"",
             mensajeError:"",
-            mostrar_mensaje_error: "d-none",
-            mostrar_mensaje_exito: "d-none"
+            mostrarMensajeError: false,
+            mostrarMensajeExito: false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -30,11 +30,10 @@ class Registro extends Component{
 
     async handleSubmit(event) {
         event.preventDefault();
-        this.setState({mostrar_mensaje_exito:"d-none"})
-        this.setState({mostrar_mensaje_error: "d-none"})
+        this.setState( { mostrarMensajeExito: false, mostrarMensaje_error: false, mensajeError: "" } )
 
         if (this.state.password1 !== this.state.password2){
-            this.setState({mostrar_mensaje_error: "", mensajeError: "Las contraseñas no coinciden."})
+            this.setState({mostrarMensajeError: true, mensajeError: "Las contraseñas no coinciden."})
         }
         else{
             try {
@@ -44,7 +43,7 @@ class Registro extends Component{
                     first_name: this.state.first_name,
                     last_name: this.state.last_name
                 });
-                this.setState({mostrar_mensaje_exito: ""})
+                this.setState({mostrarMensajeExito: true})
                 return response;
             } catch (error) {
                 if (error.response.status === 409){
@@ -54,7 +53,7 @@ class Registro extends Component{
                     this.setState({mensajeError: "No se ha podido crear el usuario"})
                 }
                 
-                this.setState({mostrar_mensaje_error: ""})
+                this.setState({mostrarMensajeError: true})
             }
         }
     }
@@ -62,20 +61,31 @@ class Registro extends Component{
     
 
     render() {
+        let alertExito
+        let alertError
+
+        if (this.state.mostrarMensajeExito){
+            alertExito = <Alert variant="success">
+                            <Alert.Heading>Cuenta creada</Alert.Heading>
+                            <p>
+                                A partir de ahora podrá iniciar sesión usando el correo y la contraseña que ha proporcionado.
+                            </p>
+                        </Alert>
+        }
+        else if (this.state.mostrarMensajeError){
+            alertError =    <Alert variant="danger">
+                                <Alert.Heading>La cuenta no se ha creado.</Alert.Heading>
+                                <p>
+                                    { this.state.mensajeError }
+                                </p>
+                            </Alert>
+        }
+
         return (
             <>
-            <Alert variant="success" className={ this.state.mostrar_mensaje_exito }>
-                <Alert.Heading>Cuenta creada</Alert.Heading>
-                <p>
-                    A partir de ahora podrá iniciar sesión usando el correo y la contraseña que ha proporcionado.
-                </p>
-            </Alert>
-            <Alert variant="danger" className={ this.state.mostrar_mensaje_error }>
-            <Alert.Heading>La cuenta no se ha creado.</Alert.Heading>
-                <p>
-                    { this.state.mensajeError }
-                </p>
-            </Alert>
+            { alertExito }
+            { alertError }
+
             <Form onSubmit={this.handleSubmit}>
                 <h2 className="mb-4">Formulario de registro</h2>
                     <Form.Group controlId="formEmail">
