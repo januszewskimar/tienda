@@ -7,6 +7,7 @@ import Alert from 'react-bootstrap/Alert'
 
 
 class InicioSesion extends Component{
+    
     constructor(props){
         super(props);
         this.state = {
@@ -34,12 +35,12 @@ class InicioSesion extends Component{
                 axiosInstance.defaults.headers['Authorization'] = "JWT " + result.data.access;
                 localStorage.setItem('access_token', result.data.access);
                 localStorage.setItem('refresh_token', result.data.refresh);
-                this.props.setSesionIniciada(true)
+                this.props.actualizarUsuarioLogueado()
                 this.props.history.push('/')
             }
         ).catch (error => {
             this.setState( {error: true} )
-            if (error.response.status == 401){
+            if (error.response.status === 401){
                 this.setState( {mensajeError: "El correo o la contraseña son incorrectos"} )
             }
             else{

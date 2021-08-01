@@ -10,10 +10,10 @@ class UsuarioEditar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: "",
-            correo: "",
-            nombre: "",
-            apellidos: "",
+            id: this.props.usuarioLogueado['id'],
+            correo: this.props.usuarioLogueado['email'],
+            nombre: this.props.usuarioLogueado['first_name'],
+            apellidos: this.props.usuarioLogueado['last_name'],
             error: false,
             mensajeError: ""
         };
@@ -22,18 +22,6 @@ class UsuarioEditar extends Component {
 
     }
 
-    componentDidMount(){
-        axiosInstance.get('/usuario-sesion-iniciada/').then(
-            result => {
-                this.setState( { id: result.data.id, correo: result.data.email, nombre: result.data.first_name, apellidos: result.data.last_name } )
-            }
-        ).catch (error => {
-                if (error.response.status === 401){
-                    this.props.setSesionIniciada(false)
-                    this.props.history.push('/inicio-sesion')
-                }
-            })
-    }
 
     handleSubmit(event){
         event.preventDefault()
@@ -44,20 +32,17 @@ class UsuarioEditar extends Component {
             last_name: this.state.apellidos,
         }).then(
             result => {
-                this.props.setSesionIniciada(true)
+                this.props.actualizarUsuarioLogueado()
                 this.props.history.push('/usuario/info')
             }
         ).catch (error => {
-                if (error.response.status === 401){
-                    this.props.setSesionIniciada(false)
-                }
-                else if (error.response.status === 409){
-                    this.setState({ error: true, mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" })
-                }
-                else{
-                    this.setState({ error: true, mensajeError: "" })
-                }
-            })
+            if (error.response.status === 409){
+                this.setState({ error: true, mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" })
+            }
+            else{
+                this.setState({ error: true, mensajeError: "" })
+            }
+        })
     }
 
     handleChange(event) {
