@@ -30,7 +30,7 @@ class Registro extends Component{
 
     async handleSubmit(event) {
         event.preventDefault();
-        this.setState( { mostrarMensajeExito: false, mostrarMensaje_error: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeExito: false, mostrarMensajeError: false, mensajeError: "" } )
 
         if (this.state.password1 !== this.state.password2){
             this.setState({mostrarMensajeError: true, mensajeError: "Las contraseñas no coinciden."})

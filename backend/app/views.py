@@ -43,6 +43,8 @@ class UsuariosId(APIView):
                 usuario.first_name = request.data['first_name']
             if "last_name" in request.data:
                 usuario.last_name = request.data['last_name']
+            if "password" in request.data:
+                usuario.set_password(request.data['password'])
 
             try:
                 usuario.save()

@@ -7,6 +7,8 @@ import InicioSesion from "./components/InicioSesion";
 import Cabecera from "./components/Cabecera";
 import UsuarioInfo from "./components/UsuarioInfo";
 import UsuarioEditar from "./components/UsuarioEditar";
+import CambiarContrasenia from "./components/CambiarContrasenia";
+
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,14 +42,15 @@ class App extends Component {
 
     render() {
         let inicioSesion = <InicioSesion usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
-        let usuarioInfo, usuarioEditar
+        let usuarioInfo, usuarioEditar, cambiarContrasenia
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
+            cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
         }
         else{
-            usuarioInfo = usuarioEditar = inicioSesion
+            cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
         return (
@@ -64,6 +67,9 @@ class App extends Component {
                     </Route>
                     <Route path={"/usuario/editar"}>
                         { usuarioEditar }
+                    </Route>
+                    <Route path={"/usuario/cambiar-contrasenia"}>
+                        { cambiarContrasenia }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

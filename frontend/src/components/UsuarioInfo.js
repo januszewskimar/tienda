@@ -61,9 +61,17 @@ class UsuarioInfo extends Component {
                     </Form.Group>
                 </Form>
 
-                <Link to="/usuario/editar">
-                    <Button variant="primary" className="mt-3">Modificar datos</Button>
-                </Link>
+                <Row className="mt-5">
+                    <Link to="/usuario/editar">
+                        <Button variant="primary">Modificar datos</Button>
+                    </Link>
+                </Row>
+                
+                <Row className="mt-3">
+                    <Link to="/usuario/cambiar-contrasenia">
+                        <Button variant="secondary" className="">Cambiar contraseña</Button>
+                    </Link>
+                </Row>
             </>
         );
     }
