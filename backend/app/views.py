@@ -51,7 +51,15 @@ class UsuariosId(APIView):
                 return Response(status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            
+
+
+    def delete(self, request, id, format='json'):
+        if request.user.id != int(id):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            usuario = Usuario.objects.get(id=id)
+            usuario.delete()
+            return Response(status=status.HTTP_200_OK)
 
 
 class UsuarioSesionIniciada(APIView):

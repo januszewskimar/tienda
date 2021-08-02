@@ -5,10 +5,40 @@ import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
+
+import axiosInstance from "../axiosApi";
+
 
 
 
 class UsuarioInfo extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            mostrarModalEliminar: false
+        }
+    }
+
+    ocultarModalEliminar = () => {
+        this.setState({mostrarModalEliminar: false})
+    }
+
+    mostrarModalEliminar = () => {
+        this.setState({mostrarModalEliminar: true})
+    }
+
+    eliminarUsuario = () => {
+        axiosInstance.delete('/usuarios/' + this.props.usuarioLogueado['id']).then(
+            result => {
+                this.props.actualizarUsuarioLogueado()
+                this.props.history.push('/')
+            }
+        ).catch (error => {
+            console.log(error)
+        })
+    }
 
     render() {
         let tipo
@@ -19,8 +49,27 @@ class UsuarioInfo extends Component {
             tipo = "Cliente"
         }
 
+
+
         return (
             <>
+                <Modal show={this.state.mostrarModalEliminar} onHide={this.ocultarModalEliminar}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar la cuenta</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar su cuenta de usuario?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarUsuario}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+
                 <h2 className="mb-4">Datos personales de la cuenta</h2>
 
                 <Form>
@@ -66,11 +115,15 @@ class UsuarioInfo extends Component {
                         <Button variant="primary">Modificar datos</Button>
                     </Link>
                 </Row>
-                
+
                 <Row className="mt-3">
                     <Link to="/usuario/cambiar-contrasenia">
                         <Button variant="secondary" className="">Cambiar contraseña</Button>
                     </Link>
+                </Row>
+
+                <Row className="mt-3">
+                    <Button variant="danger" className="warning" onClick={this.mostrarModalEliminar}>Eliminar cuenta</Button>
                 </Row>
             </>
         );
