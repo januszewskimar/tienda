@@ -6,7 +6,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import SerializadorUsuario
+from .serializers import SerializadorProducto, SerializadorUsuario
 
 
 class Usuarios(APIView):
@@ -80,3 +80,20 @@ class InvalidarToken(APIView):
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class Productos(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        print(request.data)
+
+        serializador = SerializadorProducto(data=request.data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_201_CREATED)
+        print(serializador.errors)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)

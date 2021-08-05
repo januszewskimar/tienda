@@ -8,6 +8,10 @@ import Cabecera from "./components/Cabecera";
 import UsuarioInfo from "./components/UsuarioInfo";
 import UsuarioEditar from "./components/UsuarioEditar";
 import CambiarContrasenia from "./components/CambiarContrasenia";
+import Catalogo from "./components/Catalogo";
+import AniadirProducto from "./components/AniadirProducto";
+
+
 
 
 
@@ -20,7 +24,8 @@ class App extends Component {
     constructor(props){
         super(props)
         this.state = {
-            usuarioLogueado: null
+            usuarioLogueado: null,
+            catalogo: null
         }
     }
 
@@ -39,18 +44,33 @@ class App extends Component {
         })
     }
 
+    actualizarCatalogo = () => {
+
+    }
+
 
     render() {
         let inicioSesion = <InicioSesion usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
-        let usuarioInfo, usuarioEditar, cambiarContrasenia
+        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
+            catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado}
+                                 catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
+
+            if (this.state.usuarioLogueado['is_staff']){
+                aniadirProducto = <AniadirProducto usuarioLogueado={this.state.usuarioLogueado} ctualizarUsuarioLogueado={this.actualizarUsuarioLogueado} 
+                                                   actualizarCatalogo={this.actualizarCatalogo}/>
+            }
+            else{
+                aniadirProducto = inicioSesion
+            }
+
         }
         else{
-            cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
+            catalogo = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
         return (
@@ -70,6 +90,12 @@ class App extends Component {
                     </Route>
                     <Route path={"/usuario/cambiar-contrasenia"}>
                         { cambiarContrasenia }
+                    </Route>
+                    <Route exact path={"/catalogo"}>
+                        { catalogo }
+                    </Route>
+                    <Route path={"/catalogo/aniadir"}>
+                        { aniadirProducto }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

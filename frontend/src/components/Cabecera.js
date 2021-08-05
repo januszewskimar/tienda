@@ -26,7 +26,7 @@ class Cabecera extends Component {
     }
 
     render(){
-        let parteDerecha;
+        let parteDerecha, parteIzquierda;
 
         if (this.props.usuarioLogueado === null){
             parteDerecha =  <>
@@ -45,6 +45,10 @@ class Cabecera extends Component {
                                 </Navbar.Text>
                                 <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
                            </>
+
+            parteIzquierda =    <>
+                                    <LinkContainer to="/catalogo"><Nav.Link>Catálogo</Nav.Link></LinkContainer>
+                                </>
         }
         return (
                 <Navbar bg="light" variant="light">
@@ -52,7 +56,7 @@ class Cabecera extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
-
+                            {parteIzquierda}
                         </Nav>
                         <Nav>
                             {parteDerecha}

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 
 class Usuario(AbstractUser):
@@ -17,3 +18,11 @@ class Usuario(AbstractUser):
         return self.email
         
 
+class Producto(models.Model):
+    nombre = models.CharField(max_length=50)
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    unidades_disponibles = models.IntegerField()
+    imagen = models.ImageField(upload_to="productos/")
+    fecha_introduccion = models.DateTimeField(default=datetime.now)
+    fecha_modificacion = models.DateTimeField(default=None, null=True)
