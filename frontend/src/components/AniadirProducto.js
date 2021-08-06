@@ -48,6 +48,7 @@ class AniadirProducto extends Component {
             datos.append('imagen', this.state.imagen);
 
             const response = await axiosInstance.post('/productos/', datos);
+            this.props.actualizarCatalogo()
             this.props.history.push('/catalogo')
         } catch (error) {
             this.setState( { mostrarMensajeError: true, mensajeError: ""})    

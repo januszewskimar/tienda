@@ -31,6 +31,7 @@ class App extends Component {
 
     componentDidMount(){
         this.actualizarUsuarioLogueado()
+        this.actualizarCatalogo()
     }
 
     actualizarUsuarioLogueado = () => {
@@ -45,24 +46,34 @@ class App extends Component {
     }
 
     actualizarCatalogo = () => {
+        axiosInstance.get('/productos/').then(
+            result => {
+                this.setState( { catalogo: result.data } )
+            }
+        ).catch (error => {
+            console.log(error)
+            this.setState( { catalogo: null })
+        })
+    }
 
+    actualizarTodo = () => {
+        this.actualizarUsuarioLogueado()
+        this.actualizarCatalogo()
     }
 
 
     render() {
-        let inicioSesion = <InicioSesion usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
+        let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} />
         let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
-            catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado}
-                                 catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
+            catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
 
             if (this.state.usuarioLogueado['is_staff']){
-                aniadirProducto = <AniadirProducto usuarioLogueado={this.state.usuarioLogueado} ctualizarUsuarioLogueado={this.actualizarUsuarioLogueado} 
-                                                   actualizarCatalogo={this.actualizarCatalogo}/>
+                aniadirProducto = <AniadirProducto actualizarCatalogo={this.actualizarCatalogo}/>
             }
             else{
                 aniadirProducto = inicioSesion
@@ -75,8 +86,8 @@ class App extends Component {
 
         return (
             <>
-            <Cabecera usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
-            <Container className="mt-5">
+            <Cabecera usuarioLogueado={this.state.usuarioLogueado} actualizarTodo={this.actualizarTodo} />
+            <Container className="mt-5 mb-5">
                 <Switch>
                     <Route exact path={"/registro/"} component={Registro}/>
                     <Route exact path={"/inicio-sesion/"}>

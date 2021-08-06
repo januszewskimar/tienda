@@ -35,7 +35,7 @@ class InicioSesion extends Component{
                 axiosInstance.defaults.headers['Authorization'] = "JWT " + result.data.access;
                 localStorage.setItem('access_token', result.data.access);
                 localStorage.setItem('refresh_token', result.data.refresh);
-                this.props.actualizarUsuarioLogueado()
+                this.props.actualizarTodo()
                 this.props.history.push('/')
             }
         ).catch (error => {

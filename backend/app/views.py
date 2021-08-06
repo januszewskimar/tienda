@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Usuario
+from .models import Usuario, Producto
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -89,11 +89,13 @@ class Productos(APIView):
         if not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        print(request.data)
-
         serializador = SerializadorProducto(data=request.data)
         if serializador.is_valid():
             serializador.save()
             return Response(serializador.data, status=status.HTTP_201_CREATED)
-        print(serializador.errors)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format='json'):
+        productos = Producto.objects.all()
+        serializador = SerializadorProducto(productos, many=True)
+        return Response(serializador.data)
