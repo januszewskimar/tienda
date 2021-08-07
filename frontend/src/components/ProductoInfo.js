@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
@@ -21,17 +22,21 @@ class ProductoInfo extends Component{
 
         let fecha_introduccion = new Date(producto.fecha_introduccion)
         fecha_introduccion = fecha_introduccion.toLocaleString()
-        
-        let fragmentoFechaModificacion
-        if (producto.fecha_modificacion != null){
-            let fecha_modificacion = new Date(producto.fecha_modificacion)
-            fecha_modificacion = fecha_modificacion.toLocaleString()
 
-            fragmentoFechaModificacion =    <Row  className="mt-2">
-                                                <Col>
-                                                    <small>Fecha de modificación: { fecha_modificacion }</small>
-                                                </Col>
-                                            </Row>
+        let fecha_modificacion = new Date(producto.fecha_modificacion)
+        fecha_modificacion = fecha_modificacion.toLocaleString()
+
+
+        let botonEditar
+
+        if (this.props.usuarioLogueado['is_staff']){
+            botonEditar =   <Row className="mt-4">
+                                <Col>
+                                    <Link to={"/catalogo/editar/" + id}>
+                                        <Button variant="secondary">Editar datos</Button>
+                                    </Link>
+                                </Col>
+                            </Row>
         }
 
         return (
@@ -80,7 +85,12 @@ class ProductoInfo extends Component{
                                         </Col>
                                     </Row>
 
-                                    { fragmentoFechaModificacion }
+                                    <Row className="mt-2">
+                                        <Col>
+                                            <small>Fecha de modificación: { fecha_modificacion }</small>
+                                        </Col>
+                                    </Row>
+                                    { botonEditar }
 
                                 </Card.Text>
                             </Card.Body>

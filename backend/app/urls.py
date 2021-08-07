@@ -11,5 +11,6 @@ urlpatterns = [
     path('token/refrescar/', jwt_views.TokenRefreshView.as_view(), name='refrescar_token'),
     path('token/invalidar/', views.InvalidarToken.as_view(), name='invalidar_token'),
 
-    path('productos/', views.Productos.as_view(), name='productos')
+    path('productos/', views.Productos.as_view(), name='productos'),
+    path('productos/<id>', views.ProductosId.as_view(), name='productos_id')
 ]

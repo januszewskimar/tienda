@@ -13,6 +13,8 @@ import CambiarContrasenia from "./components/CambiarContrasenia";
 import Catalogo from "./components/Catalogo";
 import AniadirProducto from "./components/AniadirProducto";
 import ProductoInfo from "./components/ProductoInfo";
+import ProductoEditar from "./components/ProductoEditar";
+
 
 
 
@@ -68,25 +70,27 @@ class App extends Component {
 
     render() {
         let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} />
-        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo
+        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
-            productoInfo = <ProductoInfo catalogo={this.state.catalogo} />
+            productoInfo = <ProductoInfo catalogo={this.state.catalogo} usuarioLogueado={this.state.usuarioLogueado} />
+
 
             if (this.state.usuarioLogueado['is_staff']){
                 aniadirProducto = <AniadirProducto actualizarCatalogo={this.actualizarCatalogo}/>
+                productoEditar = <ProductoEditar catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
             }
             else{
-                aniadirProducto = inicioSesion
+                productoEditar = aniadirProducto = inicioSesion
             }
 
         }
         else{
-            catalogo = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
+            productoEditar = productoInfo = catalogo = aniadirProducto = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
         return (
@@ -115,6 +119,9 @@ class App extends Component {
                     </Route>
                     <Route path={"/catalogo/info/:id"}>
                         { productoInfo }
+                    </Route>
+                    <Route path={"/catalogo/editar/:id"}>
+                        { productoEditar }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime
 
 from .serializers import SerializadorProducto, SerializadorUsuario
 
@@ -99,3 +100,23 @@ class Productos(APIView):
         productos = Producto.objects.all()
         serializador = SerializadorProducto(productos, many=True)
         return Response(serializador.data)
+
+class ProductosId(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, id):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            producto = Producto.objects.get(pk=id)
+        except Producto.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializador = SerializadorProducto(producto, data=request.data, partial=True)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_200_OK)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+        
