@@ -2,14 +2,18 @@ import React, { Component} from "react";
 import Container from 'react-bootstrap/Container'
 import { Switch, Route } from "react-router-dom";
 import axiosInstance from "./axiosApi";
+
 import Registro from "./components/Registro";
 import InicioSesion from "./components/InicioSesion";
 import Cabecera from "./components/Cabecera";
 import UsuarioInfo from "./components/UsuarioInfo";
 import UsuarioEditar from "./components/UsuarioEditar";
 import CambiarContrasenia from "./components/CambiarContrasenia";
+
 import Catalogo from "./components/Catalogo";
 import AniadirProducto from "./components/AniadirProducto";
+import ProductoInfo from "./components/ProductoInfo";
+
 
 
 
@@ -64,13 +68,14 @@ class App extends Component {
 
     render() {
         let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} />
-        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto
+        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
+            productoInfo = <ProductoInfo catalogo={this.state.catalogo} />
 
             if (this.state.usuarioLogueado['is_staff']){
                 aniadirProducto = <AniadirProducto actualizarCatalogo={this.actualizarCatalogo}/>
@@ -107,6 +112,9 @@ class App extends Component {
                     </Route>
                     <Route path={"/catalogo/aniadir"}>
                         { aniadirProducto }
+                    </Route>
+                    <Route path={"/catalogo/info/:id"}>
+                        { productoInfo }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

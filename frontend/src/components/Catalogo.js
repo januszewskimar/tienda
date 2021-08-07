@@ -20,10 +20,10 @@ class Catalogo extends Component {
             }
 
             productos = arrays.map(grupo => (
-                <Row className="mb-5">
+                <Row className="d-flex mb-5 justify-content-center">
                     {
                         grupo.map(elemento => (
-                            <Col>
+                            <Col className="d-flex justify-content-center">
                                 <Card className="text-center" style={{ width: '20rem' }}>
                                     <Card.Img variant="top" src={"http://localhost:8000" + elemento.imagen} width="200" height="200" />
                                     <Card.Body>
@@ -31,7 +31,9 @@ class Catalogo extends Component {
                                         <Card.Text>
                                             { elemento.precio } €
                                         </Card.Text>
-                                        <Button variant="outline-info" size="sm">Ver más</Button>
+                                        <Link to={"/catalogo/info/" + elemento.id }>
+                                            <Button variant="outline-info" size="sm">Ver más</Button>
+                                        </Link>
                                     </Card.Body>
                                 </Card>
                             </Col>
