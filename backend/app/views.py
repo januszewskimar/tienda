@@ -120,3 +120,14 @@ class ProductosId(APIView):
             return Response(serializador.data, status=status.HTTP_200_OK)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def delete(self, request, id):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            producto = Producto.objects.get(pk=id)
+        except Producto.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        producto.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

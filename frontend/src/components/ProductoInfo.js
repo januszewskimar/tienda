@@ -6,12 +6,43 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import Modal from 'react-bootstrap/Modal'
+
+import axiosInstance from "../axiosApi";
 
 
 
 class ProductoInfo extends Component{
 
+    constructor(props){
+        super(props)
+        this.state = {
+            mostrarModalEliminar: false,
+        }
+    }
+
+    ocultarModalEliminar = () => {
+        this.setState({mostrarModalEliminar: false})
+    }
+
+    mostrarModalEliminar = () => {
+        this.setState({mostrarModalEliminar: true})
+    }
+
+    eliminarProducto = () => {
+        axiosInstance.delete('/productos/' + this.props.match.params['id']).then(
+            result => {
+                this.props.actualizarCatalogo()
+                this.props.history.push('/catalogo')
+            }
+        ).catch (error => {
+            console.log(error)
+        })
+    }
+
+
     render() {
+
         let id = parseInt(this.props.match.params['id'])
         let producto
         for (let i = 0 ; i < this.props.catalogo.length ; i++){
@@ -27,20 +58,38 @@ class ProductoInfo extends Component{
         fecha_modificacion = fecha_modificacion.toLocaleString()
 
 
-        let botonEditar
+        let botonesAdministrador
 
         if (this.props.usuarioLogueado['is_staff']){
-            botonEditar =   <Row className="mt-4">
-                                <Col>
-                                    <Link to={"/catalogo/editar/" + id}>
-                                        <Button variant="secondary">Editar datos</Button>
-                                    </Link>
-                                </Col>
-                            </Row>
+            botonesAdministrador =  <Row className="mt-4">
+                                        <Col className="col-auto">
+                                            <Link to={"/catalogo/editar/" + id}>
+                                                <Button variant="secondary">Editar datos</Button>
+                                            </Link>
+                                        </Col>
+                                        <Col className="col-auto">
+                                            <Button variant="danger" onClick={this.mostrarModalEliminar}>Eliminar producto</Button>
+                                        </Col>
+                                    </Row>
         }
 
         return (
             <>
+                <Modal show={this.state.mostrarModalEliminar} onHide={this.ocultarModalEliminar}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar el producto</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar el producto?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarProducto}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
+
                 <Row>
                     <Col>
                         <Card>
@@ -90,7 +139,8 @@ class ProductoInfo extends Component{
                                             <small>Fecha de modificación: { fecha_modificacion }</small>
                                         </Col>
                                     </Row>
-                                    { botonEditar }
+
+                                    { botonesAdministrador }
 
                                 </Card.Text>
                             </Card.Body>

@@ -77,7 +77,7 @@ class App extends Component {
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
-            productoInfo = <ProductoInfo catalogo={this.state.catalogo} usuarioLogueado={this.state.usuarioLogueado} />
+            productoInfo = <ProductoInfo catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} usuarioLogueado={this.state.usuarioLogueado} />
 
 
             if (this.state.usuarioLogueado['is_staff']){
