@@ -6,14 +6,18 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
+import json
 
-from .serializers import SerializadorProducto, SerializadorUsuario
+
+from .serializers import SerializadorProducto, SerializadorUsuario, SerializadorTienda
 
 
 class Usuarios(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format='json'):
+        print(request.data)
+        print(type(request.data))
         serializador = SerializadorUsuario(data=request.data)
         if serializador.is_valid():
             if Usuario.objects.filter(email=serializador.validated_data['email']).count() == 1:
@@ -131,3 +135,23 @@ class ProductosId(APIView):
 
         producto.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class Tiendas(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        datos = dict(request.data)
+        datos['nombre'] = datos['nombre'][0]
+        datos['imagen'] = datos['imagen'][0]
+        datos['direccion'] = json.loads(datos['direccion'][0])
+        datos['descripcion'] = datos['descripcion'][0]
+
+        serializador = SerializadorTienda(data=datos)
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_201_CREATED)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)

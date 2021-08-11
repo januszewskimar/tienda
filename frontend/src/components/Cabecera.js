@@ -48,6 +48,7 @@ class Cabecera extends Component {
 
             parteIzquierda =    <>
                                     <LinkContainer to="/catalogo"><Nav.Link>Catálogo</Nav.Link></LinkContainer>
+                                    <LinkContainer to="/tiendas"><Nav.Link>Tiendas</Nav.Link></LinkContainer>
                                 </>
         }
         return (

@@ -15,6 +15,8 @@ import AniadirProducto from "./components/AniadirProducto";
 import ProductoInfo from "./components/ProductoInfo";
 import ProductoEditar from "./components/ProductoEditar";
 
+import Tiendas from "./components/Tiendas"
+import TiendaAniadir from "./components/TiendaAniadir"
 
 
 
@@ -31,13 +33,13 @@ class App extends Component {
         super(props)
         this.state = {
             usuarioLogueado: null,
-            catalogo: null
+            catalogo: null,
+            tiendas: null
         }
     }
 
     componentDidMount(){
-        this.actualizarUsuarioLogueado()
-        this.actualizarCatalogo()
+        this.actualizarTodo()
     }
 
     actualizarUsuarioLogueado = () => {
@@ -62,15 +64,20 @@ class App extends Component {
         })
     }
 
+    actualizarTiendas = () => {
+
+    }
+
     actualizarTodo = () => {
         this.actualizarUsuarioLogueado()
         this.actualizarCatalogo()
+        this.actualizarTiendas()
     }
 
 
     render() {
         let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} />
-        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar
+        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar, tiendas, tiendaAniadir
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
@@ -78,19 +85,21 @@ class App extends Component {
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
             productoInfo = <ProductoInfo catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} usuarioLogueado={this.state.usuarioLogueado} />
+            tiendas = <Tiendas tiendas={this.state.tiendas} usuarioLogueado={this.state.usuarioLogueado} />
 
 
             if (this.state.usuarioLogueado['is_staff']){
                 aniadirProducto = <AniadirProducto actualizarCatalogo={this.actualizarCatalogo}/>
                 productoEditar = <ProductoEditar catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
+                tiendaAniadir = <TiendaAniadir tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
             }
             else{
-                productoEditar = aniadirProducto = inicioSesion
+                tiendaAniadir = productoEditar = aniadirProducto = inicioSesion
             }
 
         }
         else{
-            productoEditar = productoInfo = catalogo = aniadirProducto = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
+            tiendaAniadir = tiendas = productoEditar = productoInfo = catalogo = aniadirProducto = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
         return (
@@ -122,6 +131,12 @@ class App extends Component {
                     </Route>
                     <Route path={"/catalogo/editar/:id"}>
                         { productoEditar }
+                    </Route>
+                    <Route exact path={"/tiendas/"}>
+                        { tiendas }
+                    </Route>
+                    <Route path={"/tiendas/aniadir"}>
+                        { tiendaAniadir }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

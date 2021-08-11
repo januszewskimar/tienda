@@ -12,5 +12,8 @@ urlpatterns = [
     path('token/invalidar/', views.InvalidarToken.as_view(), name='invalidar_token'),
 
     path('productos/', views.Productos.as_view(), name='productos'),
-    path('productos/<id>', views.ProductosId.as_view(), name='productos_id')
+    path('productos/<id>', views.ProductosId.as_view(), name='productos_id'),
+
+    path('tiendas/', views.Tiendas.as_view(), name='tiendas')
+
 ]

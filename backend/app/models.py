@@ -25,3 +25,22 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to="productos/")
     fecha_introduccion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
+
+
+class Direccion(models.Model):
+    destinatario = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=50)
+    localidad = models.CharField(max_length=40)
+    provincia = models.CharField(max_length=30, null=True)
+    codigo_postal = models.CharField(max_length=10)
+    pais = models.CharField(max_length=40)
+
+
+class Tienda(models.Model):
+    nombre = models.CharField(max_length=40)
+    descripcion = models.TextField()
+    imagen = models.ImageField(upload_to="tiendas/")
+    direccion = models.OneToOneField(
+        Direccion,
+        on_delete=models.CASCADE
+    )
