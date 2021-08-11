@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Usuario, Producto
+from .models import Usuario, Producto, Tienda
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -155,3 +155,8 @@ class Tiendas(APIView):
             serializador.save()
             return Response(serializador.data, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format='json'):
+        tiendas = Tienda.objects.all()
+        serializador = SerializadorTienda(tiendas, many=True)
+        return Response(serializador.data)

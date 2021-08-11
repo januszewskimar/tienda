@@ -65,7 +65,15 @@ class App extends Component {
     }
 
     actualizarTiendas = () => {
-
+        axiosInstance.get('/tiendas/').then(
+            result => {
+                this.setState( { tiendas: result.data } )
+                console.log(result.data)
+            }
+        ).catch (error => {
+            console.log(error)
+            this.setState( { tiendas: null })
+        })
     }
 
     actualizarTodo = () => {
