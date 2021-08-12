@@ -36,7 +36,8 @@ class App extends Component {
         this.state = {
             usuarioLogueado: null,
             catalogo: null,
-            tiendas: null
+            tiendas: null,
+            carrito: {}
         }
     }
 
@@ -77,6 +78,14 @@ class App extends Component {
         })
     }
 
+    setCarrito = (carrito) => {
+        this.setState( { carrito: carrito } )
+    }
+
+    vaciarCarrito = () => {
+        this.setState( { carrito: {} } )
+    }
+
     actualizarTodo = () => {
         this.actualizarUsuarioLogueado()
         this.actualizarCatalogo()
@@ -85,7 +94,7 @@ class App extends Component {
 
 
     render() {
-        let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} />
+        let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} vaciarCarrito={this.vaciarCarrito} />
         let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar, tiendas, tiendaAniadir, tiendaEditar
 
         if (this.state.usuarioLogueado != null){
@@ -93,7 +102,8 @@ class App extends Component {
             usuarioEditar = <UsuarioEditar usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
-            productoInfo = <ProductoInfo catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} usuarioLogueado={this.state.usuarioLogueado} />
+            productoInfo = <ProductoInfo catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} usuarioLogueado={this.state.usuarioLogueado}
+                                         carrito={this.state.carrito} setCarrito={this.setCarrito} />
             tiendas = <Tiendas tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
 
 
@@ -115,7 +125,7 @@ class App extends Component {
 
         return (
             <>
-            <Cabecera usuarioLogueado={this.state.usuarioLogueado} actualizarTodo={this.actualizarTodo} />
+            <Cabecera usuarioLogueado={this.state.usuarioLogueado} actualizarTodo={this.actualizarTodo} vaciarCarrito={this.vaciarCarrito} />
             <Container className="mt-5 mb-5">
                 <Switch>
                     <Route exact path={"/registro/"} component={Registro}/>

@@ -36,6 +36,7 @@ class InicioSesion extends Component{
                 localStorage.setItem('access_token', result.data.access);
                 localStorage.setItem('refresh_token', result.data.refresh);
                 this.props.actualizarTodo()
+                this.props.vaciarCarrito()
                 this.props.history.push('/')
             }
         ).catch (error => {

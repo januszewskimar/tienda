@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Modal from 'react-bootstrap/Modal'
+import Form from 'react-bootstrap/Form'
 
 import axiosInstance from "../axiosApi";
 
@@ -17,7 +18,9 @@ class ProductoInfo extends Component{
     constructor(props){
         super(props)
         this.state = {
+            id: parseInt(this.props.match.params['id']),
             mostrarModalEliminar: false,
+            cantidadCompra: 1
         }
     }
 
@@ -40,10 +43,21 @@ class ProductoInfo extends Component{
         })
     }
 
+    handleChange = (event) => {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
+    aniadirAlCarrito = (event) => {
+        event.preventDefault()
+        let carrito = this.props.carrito
+        carrito[this.state.id] = this.state.cantidadCompra
+        this.props.setCarrito(carrito)
+    }
+
 
     render() {
 
-        let id = parseInt(this.props.match.params['id'])
+        let id = this.state.id
         let producto
         for (let i = 0 ; i < this.props.catalogo.length ; i++){
             if (this.props.catalogo[i]['id'] === id){
@@ -58,7 +72,7 @@ class ProductoInfo extends Component{
         fecha_modificacion = fecha_modificacion.toLocaleString()
 
 
-        let botonesAdministrador
+        let botonesAdministrador, areaCompra
 
         if (this.props.usuarioLogueado['is_staff']){
             botonesAdministrador =  <Row className="mt-4">
@@ -71,6 +85,32 @@ class ProductoInfo extends Component{
                                             <Button variant="danger" onClick={this.mostrarModalEliminar}>Eliminar producto</Button>
                                         </Col>
                                     </Row>
+        }
+        else{
+            if (!(id in this.props.carrito)){
+                areaCompra =    <Form>
+                                    <Form.Row className="mt-4">
+                                        <Form.Label column lg={2}>Cantidad:</Form.Label>
+
+                                        <Col xs={2}>
+                                            <Form.Control name="cantidadCompra" value={this.state.cantidadCompra} type="number"
+                                                        min={1} max={producto.unidades_disponibles} onChange={this.handleChange} />
+                                        </Col>
+
+                                        <Col>
+                                            <Button type="submit" onClick={this.aniadirAlCarrito}>Añadir al carrito</Button>
+                                        </Col>
+                                    </Form.Row>
+                                </Form>
+            }
+            else{
+                areaCompra =    <Row className="mt-4">
+                                    <Col>
+                                        Ha añadido {this.props.carrito[id] == 1 ? "una unidad" : this.props.carrito[id] + " unidades" } de este producto al carrito.
+                                    </Col>
+                                </Row>
+            }
+            
         }
 
         return (
@@ -108,13 +148,7 @@ class ProductoInfo extends Component{
                                         </Col>
                                     </Row>
 
-
-                                    <Row className="mt-4">
-                                        <Col>
-                                            <Button>Comprar</Button>
-                                        </Col>
-                                    </Row>
-
+                                    { areaCompra }
 
                                     <Row className="mt-4">
                                         <Col>

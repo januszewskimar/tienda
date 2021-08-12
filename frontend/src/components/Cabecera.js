@@ -19,6 +19,7 @@ class Cabecera extends Component {
             localStorage.removeItem('refresh_token');
             axiosInstance.defaults.headers['Authorization'] = null;
             this.props.actualizarTodo();
+            this.props.vaciarCarrito();
             this.props.history.push('/');
         }).catch (error => {
             console.log(error);
