@@ -160,3 +160,33 @@ class Tiendas(APIView):
         tiendas = Tienda.objects.all()
         serializador = SerializadorTienda(tiendas, many=True)
         return Response(serializador.data)
+
+
+class TiendasId(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, id):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        datos = dict(request.data)
+        if 'nombre' in datos:
+            datos['nombre'] = datos['nombre'][0]
+        if 'imagen' in datos:
+            datos['imagen'] = datos['imagen'][0]
+        if 'direccion' in datos:
+            datos['direccion'] = json.loads(datos['direccion'][0])
+        if 'descripcion' in datos:
+            datos['descripcion'] = datos['descripcion'][0]
+
+        try:
+            tienda = Tienda.objects.get(pk=id)
+        except Tienda.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializador = SerializadorTienda(tienda, data=datos, partial=True)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_200_OK)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)

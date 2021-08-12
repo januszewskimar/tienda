@@ -37,6 +37,21 @@ class Tiendas extends Component {
                                 <p>{ elemento.direccion.direccion }</p>
                                 <p>{ elemento.direccion.localidad } { (elemento.direccion.provincia !== null ? ("(" + elemento.direccion.provincia + ")") : " " ) } { elemento.direccion.codigo_postal }</p>
                                 <p>{ elemento.direccion.pais }</p>
+
+                                { this.props.usuarioLogueado['is_staff'] ?
+                                    <>
+                                        <h4 className="mt-5 mb-4">Panel de administración</h4>
+                                            <Row>
+                                                <Col className="col-auto">
+                                                    <Link to={"/tiendas/editar/" + elemento.id}>
+                                                        <Button variant="secondary">Editar datos</Button>
+                                                    </Link>
+                                                </Col>
+                                            </Row>
+                                    </>
+
+                                    : null
+                                }
                             </Col>
 
                             <Col>
@@ -46,10 +61,13 @@ class Tiendas extends Component {
                             </Col>
                         </Row>
 
+
+
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>
         ))
+        
 
         let botonAniadir
 

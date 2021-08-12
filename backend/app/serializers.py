@@ -35,9 +35,17 @@ class SerializadorDireccion(serializers.ModelSerializer):
         model = Direccion
         fields = ['id', 'destinatario', 'direccion', 'localidad', 'provincia', 'codigo_postal', 'pais']
 
+    def to_internal_value(self, data):
+        obj = super(SerializadorDireccion, self).to_internal_value(data)
+        
+        if 'id' in data:
+            obj['id'] = data['id']
+        return obj
+
 
 class SerializadorTienda(serializers.ModelSerializer):
     direccion = SerializadorDireccion(many=False)
+    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Tienda
@@ -48,3 +56,8 @@ class SerializadorTienda(serializers.ModelSerializer):
         dir = Direccion.objects.create(**direccion)
         tienda = Tienda.objects.create(direccion=dir, **validated_data)
         return tienda
+
+    def update(self, instance, validated_data):
+        direccion = validated_data.pop('direccion')
+        Direccion.objects.filter(pk=direccion['id']).update(**direccion)
+        return super().update(instance, validated_data)
