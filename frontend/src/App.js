@@ -70,7 +70,6 @@ class App extends Component {
         axiosInstance.get('/tiendas/').then(
             result => {
                 this.setState( { tiendas: result.data } )
-                console.log(result.data)
             }
         ).catch (error => {
             console.log(error)
@@ -95,7 +94,7 @@ class App extends Component {
             cambiarContrasenia = <CambiarContrasenia usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
             catalogo = <Catalogo usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} />
             productoInfo = <ProductoInfo catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} usuarioLogueado={this.state.usuarioLogueado} />
-            tiendas = <Tiendas tiendas={this.state.tiendas} usuarioLogueado={this.state.usuarioLogueado} />
+            tiendas = <Tiendas tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
 
 
             if (this.state.usuarioLogueado['is_staff']){

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Usuario, Producto, Tienda
+from .models import Usuario, Producto, Tienda, Direccion
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -190,3 +190,25 @@ class TiendasId(APIView):
             serializador.save()
             return Response(serializador.data, status=status.HTTP_200_OK)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            tienda = Tienda.objects.get(pk=id)
+        except Tienda.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        direccion_id = tienda.direccion.id
+
+        tienda.delete()
+
+        try:
+            direccion = Direccion.objects.get(pk=direccion_id)
+        except Direccion.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        direccion.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,15 +1,47 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
+import Modal from 'react-bootstrap/Modal'
+
+import axiosInstance from "../axiosApi";
 
 
 
 
 class Tiendas extends Component {
+
+    constructor(props){
+        super(props)
+        this.state = {
+            modalEliminarVisible: false,
+            tiendaAEliminar: null
+        }
+    }
+
+    ocultarModalEliminar = () => {
+        this.setState({modalEliminarVisible: false, tiendaAEliminar: null})
+    }
+
+    mostrarModalEliminar = (id) => {
+        this.setState({modalEliminarVisible: true, tiendaAEliminar: id})
+    }
+
+    eliminarTienda = () => {
+        axiosInstance.delete('/tiendas/' + this.state.tiendaAEliminar).then(
+            (result) => {
+                this.props.actualizarTiendas()
+                this.ocultarModalEliminar()
+            }
+        ).catch (error => {
+            console.log(error)
+        })
+    }
 
     render() {
         let tiendas = this.props.tiendas.map(elemento => (
@@ -47,6 +79,9 @@ class Tiendas extends Component {
                                                         <Button variant="secondary">Editar datos</Button>
                                                     </Link>
                                                 </Col>
+                                                <Col className="col-auto">
+                                                    <Button variant="danger" onClick={() => {this.mostrarModalEliminar(elemento.id)}}>Eliminar tienda</Button>
+                                                </Col>
                                             </Row>
                                     </>
 
@@ -60,9 +95,6 @@ class Tiendas extends Component {
                                 </Card>
                             </Col>
                         </Row>
-
-
-
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>
@@ -89,10 +121,24 @@ class Tiendas extends Component {
 
                 { botonAniadir }
 
+                <Modal show={this.state.modalEliminarVisible} onHide={this.ocultarModalEliminar}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar la tienda</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar la tienda?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarTienda}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
             </>
         );
     }
 
 }
 
-export default Tiendas;
+export default withRouter(Tiendas);
