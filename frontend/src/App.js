@@ -19,7 +19,7 @@ import Tiendas from "./components/Tiendas"
 import TiendaAniadir from "./components/TiendaAniadir"
 import TiendaEditar from "./components/TiendaEditar"
 
-
+import Carrito from "./components/Carrito"
 
 
 
@@ -95,7 +95,7 @@ class App extends Component {
 
     render() {
         let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} vaciarCarrito={this.vaciarCarrito} />
-        let usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar, tiendas, tiendaAniadir, tiendaEditar
+        let carrito, usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar, tiendas, tiendaAniadir, tiendaEditar
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarioLogueado={this.actualizarUsuarioLogueado} />
@@ -112,14 +112,16 @@ class App extends Component {
                 productoEditar = <ProductoEditar catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
                 tiendaAniadir = <TiendaAniadir tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
                 tiendaEditar = <TiendaEditar tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} />
+                carrito = inicioSesion
             }
             else{
+                carrito = <Carrito carrito={this.state.carrito} setCarrito={this.setCarrito} catalogo={this.state.catalogo} />
                 tiendaEditar = tiendaAniadir = productoEditar = aniadirProducto = inicioSesion
             }
 
         }
         else{
-            tiendaEditar = tiendaAniadir = tiendas = productoEditar 
+            carrito = tiendaEditar = tiendaAniadir = tiendas = productoEditar 
             = productoInfo = catalogo = aniadirProducto = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
@@ -161,6 +163,9 @@ class App extends Component {
                     </Route>
                     <Route path={"/tiendas/editar/:id"}>
                         { tiendaEditar }
+                    </Route>
+                    <Route path={"/carrito"}>
+                        { carrito }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>

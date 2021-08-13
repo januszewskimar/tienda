@@ -106,7 +106,7 @@ class ProductoInfo extends Component{
             else{
                 areaCompra =    <Row className="mt-4">
                                     <Col>
-                                        Ha añadido {this.props.carrito[id] == 1 ? "una unidad" : this.props.carrito[id] + " unidades" } de este producto al carrito.
+                                        Ha añadido {this.props.carrito[id] === 1 ? "una unidad" : this.props.carrito[id] + " unidades" } de este producto al <Link to="/carrito/">carrito</Link>.
                                     </Col>
                                 </Row>
             }

@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
 import { LinkContainer } from "react-router-bootstrap";
 import axiosInstance from "../axiosApi";
-
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
 
 
 
@@ -33,18 +33,27 @@ class Cabecera extends Component {
             parteDerecha =  <>
                                 <LinkContainer to="/inicio-sesion"><Nav.Link>Iniciar sesión</Nav.Link></LinkContainer>
                                 <LinkContainer to="/registro"><Nav.Link>Registrarse</Nav.Link></LinkContainer>
-                           </>
+                            </>
         }
         else{
             let nombreCompleto = this.props.usuarioLogueado['first_name'] + ' ' + this.props.usuarioLogueado['last_name']
             parteDerecha = <>
+                                { !(this.props.usuarioLogueado['is_staff']) ?
+                                    <LinkContainer to="/carrito">
+                                        <Nav.Link>
+                                            <Button variant="link">
+                                                <ShoppingCartOutlinedIcon />
+                                            </Button>
+                                        </Nav.Link>
+                                    </LinkContainer>
+                                : null}
                                 <Navbar.Text className="mr-2">
-                                    Sesión iniciada como:
                                     <LinkContainer to="/usuario/info">
                                         <Button variant="link">{nombreCompleto}</Button>
                                     </LinkContainer>
                                 </Navbar.Text>
                                 <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
+
                            </>
 
             parteIzquierda =    <>
