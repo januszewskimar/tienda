@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Button from 'react-bootstrap/Button'
 
 
 
@@ -17,6 +18,12 @@ class Carrito extends Component {
         this.state = {
 
         }
+    }
+
+    eliminarProducto(id){
+        let carrito = this.props.carrito
+        delete carrito[id]
+        this.props.setCarrito(carrito)
     }
 
 
@@ -54,7 +61,7 @@ class Carrito extends Component {
                                 Total: { parseFloat(elemento.precio * value).toFixed(2) }
                             </Col>
                             <Col xs="2" className="my-auto">
-                                
+                                <Button variant="danger" onClick={() => this.eliminarProducto(elemento.id)}>Eliminar</Button>
                             </Col>
                         </Row>
                     </ListGroup.Item>
