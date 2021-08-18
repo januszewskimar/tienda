@@ -44,3 +44,23 @@ class Tienda(models.Model):
         Direccion,
         on_delete=models.CASCADE
     )
+
+
+class Pedido(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=30)
+    nota = models.CharField(max_length=50, null=True)
+
+class PedidoEntregaTienda(Pedido):
+    tienda = models.ForeignKey(Tienda, on_delete=models.SET_NULL, null=True)
+    codigo_recogida = models.CharField(max_length=6)
+
+class PedidoEntregaPostal(Pedido):
+    direccion = models.ForeignKey(Direccion, on_delete=models.SET_NULL, null=True)
+
+class ProductoPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    cantidad = models.PositiveSmallIntegerField()

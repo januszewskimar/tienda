@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { LinkContainer } from 'react-router-bootstrap'
 import { withRouter } from "react-router-dom";
 
 import Row from 'react-bootstrap/Row'
@@ -117,6 +118,12 @@ class Carrito extends Component {
                 </ListGroup>
 
                 <h5 className="mt-5">Importe total: <b>{ parseFloat(importeTotal).toFixed(2) } €</b></h5>
+
+                { Object.keys(this.props.carrito).length !== 0 ?
+                <LinkContainer to="/carrito/realizar-pedido">
+                    <Button className="mt-3" variant="primary">Realizar pedido</Button>
+                </LinkContainer>
+                : null}
 
                 <Modal show={this.state.modalModificarCantidadVisible} onHide={this.ocultarModalModificarCantidad}>
                     <Modal.Header closeButton>

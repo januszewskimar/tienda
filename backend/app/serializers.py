@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import Direccion, Tienda, Usuario, Producto
+from .models import Direccion, PedidoEntregaTienda, Tienda, Usuario, Producto, Pedido, PedidoEntregaPostal, PedidoEntregaTienda, ProductoPedido
 
 class SerializadorUsuario(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
@@ -61,3 +61,44 @@ class SerializadorTienda(serializers.ModelSerializer):
         direccion = validated_data.pop('direccion')
         Direccion.objects.filter(pk=direccion['id']).update(**direccion)
         return super().update(instance, validated_data)
+
+
+
+class SerializadorProductoPedido(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductoPedido
+        fields = ['id', 'pedido', 'producto', 'cantidad', 'precio']
+        extra_kwargs = {'pedido': {'write_only': True}}
+
+
+class SerializadorPedido(serializers.ModelSerializer):
+    productos = SerializadorProductoPedido(many=True, read_only=True)
+    
+    class Meta:
+        model = Pedido
+        fields = ['id', 'usuario', 'fecha', 'estado', 'nota', 'productos']
+        read_only_fields = ['fecha']
+
+
+
+class SerializadorPedidoEntregaTienda(SerializadorPedido):
+    tienda = serializers.PrimaryKeyRelatedField(queryset=Tienda.objects.all())
+
+    class Meta(SerializadorPedido.Meta):
+        model = PedidoEntregaTienda
+        fields = SerializadorPedido.Meta.fields + ['tienda', 'codigo_recogida']
+
+
+class SerializadorPedidoEntregaPostal(SerializadorPedido):
+    direccion = SerializadorDireccion(many=False)
+
+    class Meta(SerializadorPedido.Meta):
+        model = PedidoEntregaTienda
+        fields = SerializadorPedido.Meta.fields + ['direccion']
+
+    def create(self, validated_data):
+        direccion = validated_data.pop('direccion')
+        dir = Direccion.objects.create(**direccion)
+        pedido = PedidoEntregaPostal.objects.create(direccion=dir, **validated_data)
+        return pedido

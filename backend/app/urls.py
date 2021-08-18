@@ -15,6 +15,8 @@ urlpatterns = [
     path('productos/<id>', views.ProductosId.as_view(), name='productos_id'),
 
     path('tiendas/', views.Tiendas.as_view(), name='tiendas'),
-    path('tiendas/<id>', views.TiendasId.as_view(), name='tiendas_id')
+    path('tiendas/<id>', views.TiendasId.as_view(), name='tiendas_id'),
+
+    path('pedidos/', views.Pedidos.as_view(), name='pedidos')
 
 ]

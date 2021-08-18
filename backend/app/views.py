@@ -7,9 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
 import json
+import random
+import string
 
 
-from .serializers import SerializadorProducto, SerializadorUsuario, SerializadorTienda
+from .serializers import SerializadorProductoPedido, SerializadorPedidoEntregaTienda, SerializadorPedidoEntregaPostal, SerializadorProducto, SerializadorUsuario, SerializadorTienda
 
 
 class Usuarios(APIView):
@@ -212,3 +214,36 @@ class TiendasId(APIView):
         direccion.delete()
         
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class Pedidos(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        if request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        request.data['estado'] = 'Confirmado'
+        request.data['usuario'] = request.user.id
+
+        if 'tienda' in request.data:
+            request.data['codigo_recogida'] = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            serializador_pedido = SerializadorPedidoEntregaTienda(data=request.data)
+        else:
+            serializador_pedido = SerializadorPedidoEntregaPostal(data=request.data)
+
+        if not serializador_pedido.is_valid():
+            return Response(serializador_pedido.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        pedido = serializador_pedido.save()
+            
+        for e in request.data['productos']:
+            e['pedido'] = pedido.id
+            p = Producto.objects.get(pk=e['producto'])
+            e['precio'] = p.precio
+            serializador_producto = SerializadorProductoPedido(data=e)
+            if not serializador_producto.is_valid():
+                return Response(serializador_producto.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializador_producto.save()
+
+        return Response(serializador_pedido.data, status=status.HTTP_201_CREATED)
