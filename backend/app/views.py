@@ -31,6 +31,13 @@ class Usuarios(APIView):
                     return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self,request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        usuarios = Usuario.objects.all()
+        serializador = SerializadorUsuario(usuarios, many=True)
+        return Response(serializador.data)
 
 
 class UsuariosId(APIView):
@@ -247,6 +254,32 @@ class Pedidos(APIView):
             serializador_producto.save()
 
         return Response(serializador_pedido.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        pedidos_postales = list(PedidoEntregaPostal.objects.all().values())
+        pedidos_tienda = list(PedidoEntregaTienda.objects.all().values())
+
+        for e in pedidos_postales:
+            e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
+            e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+
+        for e in pedidos_tienda:
+            e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
+            e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+
+        serializador_pedidos_postales = SerializadorPedidoEntregaPostal(pedidos_postales, many=True)
+        serializador_pedidos_tienda = SerializadorPedidoEntregaTienda(pedidos_tienda, many=True)
+
+        pedidos = serializador_pedidos_postales.data + serializador_pedidos_tienda.data
+
+        pedidos = sorted(pedidos, key=lambda pedido: pedido['fecha'], reverse=True)
+
+        return Response(data=pedidos, status=status.HTTP_201_CREATED)
 
 
 class PedidosUsuarios(APIView):

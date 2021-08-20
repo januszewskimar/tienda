@@ -22,6 +22,7 @@ import TiendaEditar from "./components/TiendaEditar"
 import Carrito from "./components/Carrito"
 import RealizarPedido from "./components/RealizarPedido"
 import PedidosCliente from "./components/PedidosCliente"
+import PedidosAdministrador from "./components/PedidosAdministrador"
 
 
 
@@ -39,7 +40,8 @@ class App extends Component {
             usuarioLogueado: null,
             catalogo: null,
             tiendas: null,
-            carrito: {}
+            carrito: {},
+            usuarios: null
         }
     }
 
@@ -80,6 +82,17 @@ class App extends Component {
         })
     }
 
+    actualizarUsuarios = () => {
+        axiosInstance.get('/usuarios/').then(
+            result => {
+                this.setState( { usuarios: result.data } )
+            }
+        ).catch (error => {
+            console.log(error)
+            this.setState( { usuarios: null })
+        })
+    }
+
     setCarrito = (carrito) => {
         this.setState( { carrito: carrito } )
     }
@@ -92,6 +105,7 @@ class App extends Component {
         this.actualizarUsuarioLogueado()
         this.actualizarCatalogo()
         this.actualizarTiendas()
+        this.actualizarUsuarios()
     }
 
 
@@ -115,7 +129,8 @@ class App extends Component {
                 productoEditar = <ProductoEditar catalogo={this.state.catalogo} actualizarCatalogo={this.actualizarCatalogo} />
                 tiendaAniadir = <TiendaAniadir tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
                 tiendaEditar = <TiendaEditar tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} />
-                pedidos = realizarPedido = carrito = inicioSesion
+                pedidos = <PedidosAdministrador catalogo={this.state.catalogo} tiendas={this.state.tiendas} usuarios={this.state.usuarios} /> 
+                realizarPedido = carrito = inicioSesion
             }
             else{
                 carrito = <Carrito carrito={this.state.carrito} setCarrito={this.setCarrito} catalogo={this.state.catalogo} />
