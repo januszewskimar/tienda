@@ -17,6 +17,6 @@ urlpatterns = [
     path('tiendas/', views.Tiendas.as_view(), name='tiendas'),
     path('tiendas/<id>', views.TiendasId.as_view(), name='tiendas_id'),
 
-    path('pedidos/', views.Pedidos.as_view(), name='pedidos')
-
+    path('pedidos/', views.Pedidos.as_view(), name='pedidos'),
+    path('usuarios/<id>/pedidos', views.PedidosUsuarios.as_view(), name='pedidos_usuarios')
 ]

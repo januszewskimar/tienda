@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Usuario, Producto, Tienda, Direccion
+from .models import ProductoPedido, Usuario, Producto, Tienda, Direccion, PedidoEntregaTienda, PedidoEntregaPostal
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -247,3 +247,33 @@ class Pedidos(APIView):
             serializador_producto.save()
 
         return Response(serializador_pedido.data, status=status.HTTP_201_CREATED)
+
+
+class PedidosUsuarios(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, id):
+        if request.user.id != int(id):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        pedidos_postales = list(PedidoEntregaPostal.objects.filter(usuario=request.user.id).values())
+        pedidos_tienda = list(PedidoEntregaTienda.objects.filter(usuario=request.user.id).values())
+
+        for e in pedidos_postales:
+            e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
+            e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+
+        for e in pedidos_tienda:
+            e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
+            e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+
+        serializador_pedidos_postales = SerializadorPedidoEntregaPostal(pedidos_postales, many=True)
+        serializador_pedidos_tienda = SerializadorPedidoEntregaTienda(pedidos_tienda, many=True)
+
+        pedidos = serializador_pedidos_postales.data + serializador_pedidos_tienda.data
+
+        pedidos = sorted(pedidos, key=lambda pedido: pedido['fecha'], reverse=True)
+
+        return Response(data=pedidos, status=status.HTTP_201_CREATED)
