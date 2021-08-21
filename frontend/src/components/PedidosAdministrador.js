@@ -29,7 +29,9 @@ class PedidosAdministrador extends Component {
             mensajeErrorEstado: "",
 
             filtroEstado: "Todos",
-            filtroCliente: ""
+            filtroCliente: "",
+            filtroFechaDesde: "",
+            filtroFechaHasta: ""
         }
     }
 
@@ -131,10 +133,62 @@ class PedidosAdministrador extends Component {
         }
     }
 
+    handleChangeFiltroFechaDesde = (event) => {
+        this.setState( { filtroFechaDesde: event.target.value } )
+    }
+
+    handleChangeFiltroFechaHasta = (event) => {
+        this.setState( { filtroFechaHasta: event.target.value } )
+    }
+
+    filtrarFechaDesde = (pedidos) => {
+        if (this.state.filtroFechaDesde === ""){
+            return pedidos;
+        }
+
+        let fechaDesde = new Date(this.state.filtroFechaDesde);
+
+        let p = [];
+        for (let i = 0 ; i < pedidos.length ; i++){
+            let fecha = new Date(pedidos[i]['fecha'])
+            if (fecha >= fechaDesde){
+                p.push(pedidos[i]);
+            }
+        }
+        
+        return p;
+    }
+
+
+    filtrarFechaHasta = (pedidos) => {
+        if (this.state.filtroFechaHasta === ""){
+            return pedidos;
+        }
+
+        let fechaHasta = new Date(this.state.filtroFechaHasta);
+        fechaHasta.setDate(fechaHasta.getDate() + 1);
+
+        let p = [];
+        for (let i = 0 ; i < pedidos.length ; i++){
+            let fecha = new Date(pedidos[i]['fecha']);
+            if (fecha <= fechaHasta){
+                p.push(pedidos[i]);
+            }
+        }
+        
+        return p;
+    }
+
+    restablecerFiltros = () => {
+        this.setState( { filtroEstado: "Todos", filtroCliente: "", filtroFechaDesde: "", filtroFechaHasta: ""} );
+    }
+
     render() {
         let pedidosFiltrados = this.state.pedidos
         pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
         pedidosFiltrados = this.filtrarCliente(pedidosFiltrados)
+        pedidosFiltrados = this.filtrarFechaDesde(pedidosFiltrados)
+        pedidosFiltrados = this.filtrarFechaHasta(pedidosFiltrados)
 
         let pedidos = pedidosFiltrados.map(elemento => {
             let fecha = new Date(elemento.fecha)
@@ -287,21 +341,31 @@ class PedidosAdministrador extends Component {
                     <Col xs="2">
                         <h4 className="mb-4">Filtros</h4>
 
-                        <Form.Label className="mr-3">Estado</Form.Label>
-                            <Form.Control className="mr-3" as="select" value={this.state.filtroEstado} 
-                                          onChange={this.handleChangeFiltroEstado}>
-                                <option>Todos</option>
-                                <option>Confirmado</option>
-                                <option>En preparación</option>
-                                <option>Listo para recoger</option>
-                                <option>Recogido</option>
-                                <option>Enviado</option>
+                        <Form.Label className="mt-2 mr-3">Estado</Form.Label>
+                        <Form.Control className="mr-3" as="select" value={this.state.filtroEstado} 
+                                      onChange={this.handleChangeFiltroEstado}>
+                            <option>Todos</option>
+                            <option>Confirmado</option>
+                            <option>En preparación</option>
+                            <option>Listo para recoger</option>
+                            <option>Recogido</option>
+                            <option>Enviado</option>
                         </Form.Control>
 
 
-                        <Form.Label className="mt-3">Cliente</Form.Label>
-                            <Form.Control className="mr-3" placeholder="Correo o nombre" value={this.state.filtroCliente} 
+                        <Form.Label className="mt-4">Cliente</Form.Label>
+                        <Form.Control className="mr-3" placeholder="Correo o nombre" value={this.state.filtroCliente} 
                                           onChange={this.handleChangeFiltroCliente} />
+
+                        <Form.Label className="mt-4">Fecha desde</Form.Label>
+                        <Form.Control type="date" value={this.state.filtroFechaDesde} onChange={this.handleChangeFiltroFechaDesde}/>
+
+                        <Form.Label className="mt-4">Fecha hasta</Form.Label>
+                        <Form.Control type="date" className="mb-2" value={this.state.filtroFechaHasta} onChange={this.handleChangeFiltroFechaHasta}/>
+
+                        <Button className="mt-4" variant="secondary" onClick={this.restablecerFiltros}>
+                            Restablecer filtros
+                        </Button>
 
                     </Col>
 
