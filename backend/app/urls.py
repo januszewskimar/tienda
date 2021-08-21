@@ -18,5 +18,6 @@ urlpatterns = [
     path('tiendas/<id>', views.TiendasId.as_view(), name='tiendas_id'),
 
     path('pedidos/', views.Pedidos.as_view(), name='pedidos'),
-    path('usuarios/<id>/pedidos', views.PedidosUsuarios.as_view(), name='pedidos_usuarios')
+    path('usuarios/<id>/pedidos', views.PedidosUsuarios.as_view(), name='pedidos_usuarios'),
+    path('pedidos/<id>', views.PedidosId.as_view(), name='pedidos_id')
 ]

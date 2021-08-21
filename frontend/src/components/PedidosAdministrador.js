@@ -8,6 +8,8 @@ import Button from 'react-bootstrap/Button'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Form from 'react-bootstrap/Form'
+import Modal from 'react-bootstrap/Modal'
 
 import axiosInstance from "../axiosApi";
 
@@ -20,17 +22,60 @@ class PedidosAdministrador extends Component {
         super(props)
         this.state = {
             pedidos: [],
+            estados: {},
+            mostrarMensajeExitoEstado: false,
+            mostrarMensajeErrorEstado: false,
+            mensajeErrorEstado: ""
         }
     }
 
     componentDidMount(){
+        this.actualizarPedidos()
+        let estados = {}
+        for (let i = 0 ; i < this.state.pedidos ; i++){
+            estados[this.state.id] = null;
+        }
+    }
+
+    actualizarPedidos(){
         axiosInstance.get('/pedidos/')
            .then( result => {
                 this.setState( { pedidos: result.data } )
             }).catch (error => {
                 console.log(error);
             })
+    }
 
+    handleChangeEstado(event, id) {
+        let estados = this.state.estados
+        estados[id] = event.target.value
+        this.setState({estados: estados});
+    }
+
+    handleSubmitEstado(event, id){
+        event.preventDefault();
+
+
+        if (this.state.estados[id] === null || this.state.estados[id] === undefined){
+            this.setState( { mostrarMensajeErrorEstado: true, mensajeErrorEstado: "Tiene que seleccionar un estado." } )
+        }
+        else{
+            axiosInstance.patch('/pedidos/' + id, { estado: this.state.estados[id] })
+            .then( result => {
+                    this.setState( { mostrarMensajeExitoEstado: true  } )
+                    this.actualizarPedidos()
+                }).catch (error => {
+                    this.setState( { mostrarMensajeErrorEstado: true, mensajeErrorEstado: "No se ha podido cambiar el estado." } )
+                })
+        }
+    }
+
+    cerrarMensajeErrorEstado = () => {
+        this.setState( { mostrarMensajeErrorEstado: false, mensajeErrorEstado: "" } )
+    }
+
+    cerrarMensajeExitoEstado = () => {
+        this.setState( { mostrarMensajeExitoEstado: false } )
     }
 
     render() {
@@ -148,6 +193,29 @@ class PedidosAdministrador extends Component {
                               )
                               : null
                             }
+
+                            <h4 className="mt-5 mb-4">Panel de administración</h4>
+
+                            <Form inline onSubmit={ (event) => this.handleSubmitEstado(event, elemento.id)}>
+                                <Form.Label className="mr-3">Modificar estado</Form.Label>
+                                <Form.Control className="mr-3" as="select" name="pais" value={this.state.estados[elemento.id]} 
+                                              onChange={(evento) => this.handleChangeEstado(evento, elemento.id)}>
+                                    <option disabled hidden selected>Seleccionar estado</option>
+                                    <option value="Confirmado">Confirmado</option>
+                                    <option value="En preparación">En preparación</option>
+                                    { "tienda" in elemento ?
+                                    <>
+                                    <option>Listo para recoger</option>
+                                    <option>Recogido</option>
+                                    </>
+                                    :
+                                    <option>Enviado</option> }
+
+                                </Form.Control>
+                                <Button variant="primary" type="submit">
+                                    Cambiar
+                                </Button>
+                            </Form>
                         </Card.Body>
                     </Accordion.Collapse>
                 </Card>
@@ -161,6 +229,33 @@ class PedidosAdministrador extends Component {
                 <Accordion defaultActiveKey="0">
                     { pedidos }
                 </Accordion>
+
+                <Modal show={this.state.mostrarMensajeErrorEstado} onHide={this.cerrarMensajeErrorEstado}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Error al cambiar el estado</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>{ this.state.mensajeErrorEstado }</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.cerrarMensajeErrorEstado}>
+                            Cerrar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.mostrarMensajeExitoEstado} onHide={this.cerrarMensajeExitoEstado}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Estado cambiado correctamente</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Se ha modificado el estado correctamente.
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.cerrarMensajeExitoEstado}>
+                            Cerrar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </>
         );
     }

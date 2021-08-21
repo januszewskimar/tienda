@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import ProductoPedido, Usuario, Producto, Tienda, Direccion, PedidoEntregaTienda, PedidoEntregaPostal
+from .models import ProductoPedido, Usuario, Producto, Tienda, Direccion, PedidoEntregaTienda, PedidoEntregaPostal, Pedido
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ import random
 import string
 
 
-from .serializers import SerializadorProductoPedido, SerializadorPedidoEntregaTienda, SerializadorPedidoEntregaPostal, SerializadorProducto, SerializadorUsuario, SerializadorTienda
+from .serializers import SerializadorPedido, SerializadorProductoPedido, SerializadorPedidoEntregaTienda, SerializadorPedidoEntregaPostal, SerializadorProducto, SerializadorUsuario, SerializadorTienda
 
 
 class Usuarios(APIView):
@@ -310,3 +310,22 @@ class PedidosUsuarios(APIView):
         pedidos = sorted(pedidos, key=lambda pedido: pedido['fecha'], reverse=True)
 
         return Response(data=pedidos, status=status.HTTP_201_CREATED)
+
+class PedidosId(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, id):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            pedido = Pedido.objects.get(pk=id)
+        except Pedido.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializador = SerializadorPedido(pedido, data=request.data, partial=True)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_200_OK)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
