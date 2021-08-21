@@ -22,10 +22,13 @@ class PedidosAdministrador extends Component {
         super(props)
         this.state = {
             pedidos: [],
+            pedidosFiltrados: [],
             estados: {},
             mostrarMensajeExitoEstado: false,
             mostrarMensajeErrorEstado: false,
-            mensajeErrorEstado: ""
+            mensajeErrorEstado: "",
+
+            filtroEstado: "Todos"
         }
     }
 
@@ -78,8 +81,30 @@ class PedidosAdministrador extends Component {
         this.setState( { mostrarMensajeExitoEstado: false } )
     }
 
+    handleChangeFiltroEstado = (event) => {
+        this.setState( { filtroEstado: event.target.value } )
+    }
+
+    filtrarEstado = (pedidos) => {
+        if (this.state.filtroEstado === "Todos"){
+            return pedidos;
+        }
+        else{
+            let p = [];
+            for (let i = 0 ; i < pedidos.length ; i++){
+                if (pedidos[i]['estado'] === this.state.filtroEstado){
+                    p.push(pedidos[i]);
+                }
+            }
+            return p;
+        }
+    }
+
     render() {
-        let pedidos = this.state.pedidos.map(elemento => {
+        let pedidosFiltrados = this.state.pedidos
+        pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
+
+        let pedidos = pedidosFiltrados.map(elemento => {
             let fecha = new Date(elemento.fecha)
             fecha = fecha.toLocaleString()
 
@@ -201,8 +226,8 @@ class PedidosAdministrador extends Component {
                                 <Form.Control className="mr-3" as="select" name="pais" value={this.state.estados[elemento.id]} 
                                               onChange={(evento) => this.handleChangeEstado(evento, elemento.id)}>
                                     <option disabled hidden selected>Seleccionar estado</option>
-                                    <option value="Confirmado">Confirmado</option>
-                                    <option value="En preparación">En preparación</option>
+                                    <option>Confirmado</option>
+                                    <option>En preparación</option>
                                     { "tienda" in elemento ?
                                     <>
                                     <option>Listo para recoger</option>
@@ -226,10 +251,29 @@ class PedidosAdministrador extends Component {
             <>
                 <h2 className="mb-5">Pedidos</h2>
 
-                <Accordion defaultActiveKey="0">
-                    { pedidos }
-                </Accordion>
+                <Row>
+                    <Col xs="2">
+                        <h4 className="mb-4">Filtros</h4>
 
+                        <Form.Label className="mr-3">Estado</Form.Label>
+                            <Form.Control className="mr-3" as="select" name="pais" value={this.state.filtroEstado} 
+                                          onChange={this.handleChangeFiltroEstado}>
+                                <option>Todos</option>
+                                <option>Confirmado</option>
+                                <option>En preparación</option>
+                                <option>Listo para recoger</option>
+                                <option>Recogido</option>
+                                <option>Enviado</option>
+                        </Form.Control>
+                    </Col>
+
+                    <Col>
+                        <Accordion defaultActiveKey="0">
+                            { pedidos }
+                        </Accordion>
+                    </Col>
+                </Row>
+                
                 <Modal show={this.state.mostrarMensajeErrorEstado} onHide={this.cerrarMensajeErrorEstado}>
                     <Modal.Header closeButton>
                         <Modal.Title>Error al cambiar el estado</Modal.Title>
