@@ -28,7 +28,8 @@ class PedidosAdministrador extends Component {
             mostrarMensajeErrorEstado: false,
             mensajeErrorEstado: "",
 
-            filtroEstado: "Todos"
+            filtroEstado: "Todos",
+            filtroCliente: ""
         }
     }
 
@@ -100,9 +101,40 @@ class PedidosAdministrador extends Component {
         }
     }
 
+    handleChangeFiltroCliente = (event) => {
+        this.setState( { filtroCliente: event.target.value.toLowerCase() } )
+    }
+
+    filtrarCliente = (pedidos) => {
+        if (this.state.filtroCliente === ""){
+            return pedidos;
+        }
+        else{
+            let p = [];
+            for (let i = 0 ; i < pedidos.length ; i++){
+                let cont = true;
+                let usuario
+                for (let j = 0 ; cont && j < this.props.usuarios.length ; j++){
+                    if (this.props.usuarios[j]['id'] === pedidos[i]['usuario']){
+                        cont = false;
+                        usuario = this.props.usuarios[j]
+                        let nombre = usuario['first_name'] + ' ' + usuario['last_name'];
+                        nombre = nombre.toLowerCase()
+                        if (usuario['email'].toLowerCase().includes(this.state.filtroCliente) ||
+                            nombre.includes(this.state.filtroCliente)){
+                                p.push(pedidos[i]);
+                        }
+                    }
+                }
+            }
+            return p;
+        }
+    }
+
     render() {
         let pedidosFiltrados = this.state.pedidos
         pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
+        pedidosFiltrados = this.filtrarCliente(pedidosFiltrados)
 
         let pedidos = pedidosFiltrados.map(elemento => {
             let fecha = new Date(elemento.fecha)
@@ -256,7 +288,7 @@ class PedidosAdministrador extends Component {
                         <h4 className="mb-4">Filtros</h4>
 
                         <Form.Label className="mr-3">Estado</Form.Label>
-                            <Form.Control className="mr-3" as="select" name="pais" value={this.state.filtroEstado} 
+                            <Form.Control className="mr-3" as="select" value={this.state.filtroEstado} 
                                           onChange={this.handleChangeFiltroEstado}>
                                 <option>Todos</option>
                                 <option>Confirmado</option>
@@ -265,6 +297,12 @@ class PedidosAdministrador extends Component {
                                 <option>Recogido</option>
                                 <option>Enviado</option>
                         </Form.Control>
+
+
+                        <Form.Label className="mt-3">Cliente</Form.Label>
+                            <Form.Control className="mr-3" placeholder="Correo o nombre" value={this.state.filtroCliente} 
+                                          onChange={this.handleChangeFiltroCliente} />
+
                     </Col>
 
                     <Col>
