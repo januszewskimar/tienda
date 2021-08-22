@@ -169,6 +169,71 @@ class ProductoInfo extends Component{
             
         }
 
+        let opiniones = producto['opiniones'].map( elemento =>{
+            let fecha_creacion = new Date(elemento['fecha_creacion'])
+            fecha_creacion = fecha_creacion.toLocaleString()
+
+            let fecha_modificacion = new Date(elemento['fecha_modificacion'])
+            fecha_modificacion = fecha_modificacion.toLocaleString()            
+            
+            return(
+            <Row className="mt-4">
+                <Col>
+                    <Card>
+                        <Card.Body>
+                            { elemento.valoracion_numerica >= 1 ?
+                              <StarIcon/>
+                            : <StarOutlineIcon/>
+                            }
+                            { elemento.valoracion_numerica >= 2 ?
+                              <StarIcon/>
+                            : <StarOutlineIcon/>
+                            }
+                            { elemento.valoracion_numerica >= 3 ?
+                              <StarIcon/>
+                            : <StarOutlineIcon/>
+                            }
+                            { elemento.valoracion_numerica >= 4 ?
+                              <StarIcon/>
+                            : <StarOutlineIcon/>
+                            }
+                            { elemento.valoracion_numerica >= 5 ?
+                              <StarIcon/>
+                            : <StarOutlineIcon/>
+                            }
+                        
+
+                            <Card.Title className="mt-4">{ elemento.titulo }</Card.Title>
+
+                            <p className="text-justify">{ elemento.descripcion }</p>
+
+                            <Row className="mt-4 mb-1">
+                                <Col>
+                                    <small>Fecha de creación: { fecha_creacion }</small>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <small>Fecha de modificación: { fecha_modificacion }</small>
+                                </Col>
+                            </Row>
+
+
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        )})
+        
+        let haPublicadoOpinion = false
+        let cont = true
+        for (let i = 0 ; cont && i < producto['opiniones'].length ; i++){
+            if (this.props.usuarioLogueado['id'] === producto['opiniones'][i]['usuario']){
+                haPublicadoOpinion = true
+                cont = false
+            }
+        }
+
         return (
             <>
                 <Row>
@@ -181,7 +246,8 @@ class ProductoInfo extends Component{
                             <Card.Body>
                                 <Card.Title><h3 className="mb-4">Opiniones</h3></Card.Title>
 
-                                { this.props.usuarioLogueado['is_staff'] ? 
+                                { this.props.usuarioLogueado['is_staff'] || haPublicadoOpinion
+                                  ? 
                                     null
                                 :
                                 <Row className="mt-4">
@@ -189,7 +255,12 @@ class ProductoInfo extends Component{
                                             <Button variant="secondary" onClick={this.mostrarModalAniadirComentario}>Añadir opinión</Button>
                                         </Col>
                                 </Row>
-                                }                   
+                                }
+
+                                { producto.opiniones.length > 0 ?
+                                  opiniones 
+                                :
+                                <h5 className="mt-5">Todavía no hay opiniones sobre este producto</h5>}           
                             </Card.Body>
                         </Card>
                     </Col>

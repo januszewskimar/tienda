@@ -357,11 +357,14 @@ class OpinionesProducto(APIView):
 
         request.data['usuario'] = request.user.id
 
-        print(request.data)
-
         serializador = SerializadorOpinionProducto(data=request.data)
         if serializador.is_valid():
             serializador.save()
             return Response(serializador.data, status=status.HTTP_201_CREATED)
         print(serializador.errors)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        opiniones = OpinionProducto.objects.all()
+        serializador = SerializadorOpinionProducto(opiniones, many=True)
+        return Response(serializador.data)

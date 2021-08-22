@@ -62,8 +62,29 @@ class App extends Component {
 
     actualizarCatalogo = () => {
         axiosInstance.get('/productos/').then(
-            result => {
-                this.setState( { catalogo: result.data } )
+            resultProductos => {
+                for (let i = 0 ; i < resultProductos.data.length ; i++){
+                    resultProductos.data[i]['opiniones'] = []
+                }
+                axiosInstance.get('/opiniones/').then(
+                    resultOpiniones => {
+                        for (let i = 0 ; i < resultOpiniones.data.length ; i++){
+                            let o = resultOpiniones.data[i]
+                            let cont = true
+                            for (let j = 0 ; cont && j < resultProductos.data.length ; j++){
+                                if (o['producto'] === resultProductos.data[j]['id']){
+                                    resultProductos.data[j]['opiniones'].push(o)
+                                    cont = false
+                                }
+                            }
+                        }
+
+                        this.setState( { catalogo: resultProductos.data } )
+                    }
+                ).catch (error => {
+                    console.log(error)
+                    this.setState( { catalogo: null })
+                })
             }
         ).catch (error => {
             console.log(error)
