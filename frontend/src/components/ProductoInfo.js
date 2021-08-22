@@ -28,12 +28,17 @@ class ProductoInfo extends Component{
             mostrarModalEliminar: false,
             cantidadCompra: 1,
 
-            modalAniadirComentarioVisible: false,
+            modalAniadirOpinionVisible: false,
+            mensajeErrorAniadirOpinionVisible: false,
+            mensajeErrorAniadirOpinion: "",
+
+            modalModificarOpinionVisible: false,
+            mensajeErrorModificarOpinionVisible: false,
+            mensajeErrorModificarOpinion: "",
+
             valoracionNumerica: 0,
             titulo: "",
             descripcion: "",
-            mensajeErrorAniadirComentarioVisible: false,
-            mensajeErrorAniadirComentario: ""
         }
     }
 
@@ -67,23 +72,23 @@ class ProductoInfo extends Component{
         this.props.setCarrito(carrito)
     }
 
-    mostrarModalAniadirComentario = () => {
-        this.setState( { modalAniadirComentarioVisible: true, valoracionNumerica: 0, titulo: "", descripcion: "", mensajeErrorAniadirComentarioVisible: false } )
+    mostrarModalAniadirOpinion = () => {
+        this.setState( { modalAniadirOpinionVisible: true, valoracionNumerica: 0, titulo: "", descripcion: "", mensajeErrorAniadirOpinionVisible: false } )
     }
 
-    ocultarModalAniadirComentario = () => {
-        this.setState( { modalAniadirComentarioVisible: false, mensajeErrorAniadirComentarioVisible: false } )
+    ocultarModalAniadirOpinion = () => {
+        this.setState( { modalAniadirOpinionVisible: false, mensajeErrorAniadirOpinionVisible: false } )
     }
 
     setValoracionNumerica = (num) => {
         this.setState( { valoracionNumerica: num } )
     }
 
-    handleGuardarComentario = (event) => {
+    handleGuardarOpinion = (event) => {
         event.preventDefault()
 
         if (this.state.valoracionNumerica === 0){
-            this.setState( { mensajeErrorAniadirComentarioVisible: true, mensajeErrorAniadirComentario: "Seleccione una valoración numérica." } )
+            this.setState( { mensajeErrorAniadirOpinionVisible: true, mensajeErrorAniadirOpinion: "Seleccione una valoración numérica." } )
         }
         else{
             let datos = { producto: this.state.id,
@@ -94,11 +99,11 @@ class ProductoInfo extends Component{
             axiosInstance.post('/opiniones/', datos).then(
                 result => {
                     this.props.actualizarCatalogo()
-                    this.setState( { modalAniadirComentarioVisible: false, mensajeErrorAniadirComentarioVisible: false } )
+                    this.setState( { modalAniadirOpinionVisible: false, mensajeErrorAniadirOpinionVisible: false } )
                 }
             ).catch (error => {
                 console.log(error)
-                this.setState( { mensajeErrorAniadirComentarioVisible: true, mensajeErrorAniadirComentario: "No se ha podido añadir el comentario." } )
+                this.setState( { mensajeErrorAniadirOpinionVisible: true, mensajeErrorAniadirOpinion: "No se ha podido añadir la opinión." } )
             })
         }
     }
@@ -109,6 +114,67 @@ class ProductoInfo extends Component{
 
     handleChangeDescripcion = (event) => {
         this.setState( { descripcion: event.target.value } )
+    }
+
+    mostrarModalModificarOpinion = () => {
+        let opinion = this.getOpinionUsuario()
+
+        this.setState( { modalModificarOpinionVisible: true,
+                         valoracionNumerica: opinion['valoracion_numerica'],
+                         titulo: opinion['titulo'],
+                         descripcion: opinion['descripcion'],
+                         mensajeErrorModificarOpinionVisible: false } )
+    }
+
+    ocultarModalModificarOpinion = () => {
+        this.setState( { modalModificarOpinionVisible: false, mensajeErrorModificarOpinionVisible: false } )
+    }
+
+    handleModificarOpinion = (event) => {
+        event.preventDefault()
+
+        let opinion = this.getOpinionUsuario();
+
+        if (this.state.valoracionNumerica === 0){
+            this.setState( { mensajeErrorModificarOpinionVisible: true, mensajeErrorModificarOpinion: "Seleccione una valoración numérica." } )
+        }
+        else{
+            let datos = { producto: this.state.id,
+                          valoracion_numerica: this.state.valoracionNumerica,
+                          titulo: this.state.titulo,
+                          descripcion: this.state.descripcion }
+
+            axiosInstance.patch('/opiniones/' + opinion['id'], datos).then(
+                result => {
+                    this.props.actualizarCatalogo()
+                    this.setState( { modalModificarOpinionVisible: false, mensajeErrorModificarOpinionVisible: false } )
+                }
+            ).catch (error => {
+                console.log(error)
+                this.setState( { mensajeErrorModificarOpinionVisible: true, mensajeErrorModificarOpinion: "No se ha podido modificar la opinión." } )
+            })
+        }
+    }
+
+    getOpinionUsuario = () => {
+        let id = this.state.id
+        let producto
+        let cont = true
+        for (let i = 0 ; cont && i < this.props.catalogo.length ; i++){
+            if (this.props.catalogo[i]['id'] === id){
+                producto = this.props.catalogo[i]
+                cont = false
+            }
+        }
+        cont = true
+        let opiniones = producto['opiniones']
+        let opinion
+        for (let i = 0 ; cont && i < opiniones.length ; i++){
+            if (parseInt(opiniones[i]['usuario']) === parseInt(this.props.usuarioLogueado['id'])){
+                opinion = opiniones[i]
+            }
+        }
+        return opinion
     }
 
     render() {
@@ -174,13 +240,18 @@ class ProductoInfo extends Component{
             fecha_creacion = fecha_creacion.toLocaleString()
 
             let fecha_modificacion = new Date(elemento['fecha_modificacion'])
-            fecha_modificacion = fecha_modificacion.toLocaleString()            
+            fecha_modificacion = fecha_modificacion.toLocaleString()
             
             return(
             <Row className="mt-4">
                 <Col>
                     <Card>
                         <Card.Body>
+                            { elemento.usuario === this.props.usuarioLogueado.id ?
+                             <h5 className="mb-3"><mark>Opinión añadida por Usted</mark></h5>
+                             : null}
+
+
                             { elemento.valoracion_numerica >= 1 ?
                               <StarIcon/>
                             : <StarOutlineIcon/>
@@ -297,9 +368,15 @@ class ProductoInfo extends Component{
                                 :
                                 <Row className="mt-4">
                                         <Col>
-                                            <Button variant="secondary" onClick={this.mostrarModalAniadirComentario}>Añadir opinión</Button>
+                                            <Button variant="secondary" onClick={this.mostrarModalAniadirOpinion}>Añadir opinión</Button>
                                         </Col>
                                 </Row>
+                                }
+
+                                { haPublicadoOpinion ?
+                                    <Button variant="secondary" onClick={this.mostrarModalModificarOpinion}>Modificar mi opinión</Button>
+                                    :
+                                    null                         
                                 }
 
                                 { producto.opiniones.length > 0 ?
@@ -370,13 +447,13 @@ class ProductoInfo extends Component{
                     </Modal.Footer>
                 </Modal>
 
-                <Modal show={this.state.modalAniadirComentarioVisible} onHide={this.ocultarModalAniadirComentario}>
+                <Modal show={this.state.modalAniadirOpinionVisible} onHide={this.ocultarModalAniadirOpinion}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Añadir un comentario</Modal.Title>
+                        <Modal.Title>Añadir una opinión</Modal.Title>
                     </Modal.Header>
                                     
                     <Modal.Body>
-                    <Form id="formAniadirComentario" onSubmit={this.handleGuardarComentario}>
+                    <Form id="formAniadirOpinion" onSubmit={this.handleGuardarOpinion}>
 
                         <Form.Group controlId="formNombre">
                             <Row>
@@ -429,22 +506,22 @@ class ProductoInfo extends Component{
 
                         <Form.Group controlId="formNombre">
                             <Form.Label>Título</Form.Label>
-                            <Form.Control placeholder="Introduzca el título del comentario" value={this.state.tituloFormulario} 
+                            <Form.Control placeholder="Introduzca el título de la opinión" value={this.state.titulo} 
                                         name="nombre" onChange={this.handleChangeTitulo} required />
                         </Form.Group>
 
                         <Form.Group controlId="formDescripcion">
                             <Form.Label>Descripción</Form.Label>
-                            <Form.Control placeholder="Introduzca la descripción" value={this.state.descripcionFormulario} 
+                            <Form.Control placeholder="Introduzca la descripción" value={this.state.descripcion} 
                                         name="descripcion" onChange={this.handleChangeDescripcion} as="textarea" rows="5" required />
                         </Form.Group>
                         </Form>
 
-                        { this.state.mensajeErrorAniadirComentarioVisible ? 
+                        { this.state.mensajeErrorAniadirOpinionVisible ? 
                             <Alert variant="danger">
-                                <Alert.Heading>Error al añadir el comentario.</Alert.Heading>
+                                <Alert.Heading>Error al añadir la opinión.</Alert.Heading>
                                 <p>
-                                    { this.state.mensajeErrorAniadirComentario }
+                                    { this.state.mensajeErrorAniadirOpinión }
                                 </p>
                             </Alert>
                             : null
@@ -453,10 +530,98 @@ class ProductoInfo extends Component{
                     </Modal.Body>
                                     
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.ocultarModalAniadirComentario}>Cerrar</Button>
-                        <Button variant="primary" form="formAniadirComentario" type="submit">Guardar</Button>
+                        <Button variant="secondary" onClick={this.ocultarModalAniadirOpinion}>Cerrar</Button>
+                        <Button variant="primary" form="formAniadirOpinion" type="submit">Guardar</Button>
                     </Modal.Footer>
-                </Modal>            
+                </Modal>
+                
+                <Modal show={this.state.modalModificarOpinionVisible} onHide={this.ocultarModalModificarOpinion}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modificar la opinión</Modal.Title>
+                </Modal.Header>
+                                
+                <Modal.Body>
+                <Form id="formModificarOpinion" onSubmit={this.handleModificarOpinion}>
+
+                    <Form.Group controlId="formNombre">
+                        <Row>
+                            <Col>
+                                <Form.Label>Valoración numérica</Form.Label>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <ToggleButtonGroup type="checkbox" >
+
+                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(1)}>
+                                        { this.state.valoracionNumerica >= 1 ?
+                                        <StarIcon />
+                                        :
+                                        <StarOutlineIcon /> }
+                                    </ToggleButton>
+
+                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(2)}>
+                                    { this.state.valoracionNumerica >= 2 ?
+                                        <StarIcon />
+                                        :
+                                        <StarOutlineIcon /> }                                
+                                    </ToggleButton>
+
+                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(3)}>
+                                    { this.state.valoracionNumerica >= 3 ?
+                                        <StarIcon />
+                                        :
+                                        <StarOutlineIcon /> }                                
+                                    </ToggleButton>
+
+                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(4)}>
+                                    { this.state.valoracionNumerica >= 4 ?
+                                        <StarIcon />
+                                        :
+                                        <StarOutlineIcon /> }                                
+                                    </ToggleButton>
+
+                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(5)}>
+                                    { this.state.valoracionNumerica === 5 ?
+                                        <StarIcon />
+                                        :
+                                        <StarOutlineIcon /> }                                
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+
+                    <Form.Group controlId="formNombre">
+                        <Form.Label>Título</Form.Label>
+                        <Form.Control placeholder="Introduzca el título de la opinión" value={this.state.titulo} 
+                                    name="nombre" onChange={this.handleChangeTitulo} required />
+                    </Form.Group>
+
+                    <Form.Group controlId="formDescripcion">
+                        <Form.Label>Descripción</Form.Label>
+                        <Form.Control placeholder="Introduzca la descripción" value={this.state.descripcion} 
+                                    name="descripcion" onChange={this.handleChangeDescripcion} as="textarea" rows="5" required />
+                    </Form.Group>
+                    </Form>
+
+                    { this.state.mensajeErrorModificarOpinionVisible ? 
+                        <Alert variant="danger">
+                            <Alert.Heading>Error al modificar la opinión.</Alert.Heading>
+                            <p>
+                                { this.state.mensajeErrorModificarOpinion }
+                            </p>
+                        </Alert>
+                        : null
+                    }
+
+                </Modal.Body>
+                                
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={this.ocultarModalModificarOpinion}>Cerrar</Button>
+                    <Button variant="primary" form="formModificarOpinion" type="submit">Guardar</Button>
+                </Modal.Footer>
+            </Modal>    
             </>
         )
     }

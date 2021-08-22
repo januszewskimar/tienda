@@ -368,3 +368,23 @@ class OpinionesProducto(APIView):
         opiniones = OpinionProducto.objects.all()
         serializador = SerializadorOpinionProducto(opiniones, many=True)
         return Response(serializador.data)
+
+
+class OpinionesProductoId(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, id):
+        try:
+            opinion = OpinionProducto.objects.get(pk=id)
+        except OpinionProducto.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if not request.user.id != opinion.usuario:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        serializador = SerializadorOpinionProducto(opinion, data=request.data, partial=True)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_200_OK)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)

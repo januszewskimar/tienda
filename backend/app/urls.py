@@ -21,6 +21,7 @@ urlpatterns = [
     path('usuarios/<id>/pedidos', views.PedidosUsuarios.as_view(), name='pedidos_usuarios'),
     path('pedidos/<id>', views.PedidosId.as_view(), name='pedidos_id'),
 
-    path('opiniones/', views.OpinionesProducto.as_view(), name='opiniones')
+    path('opiniones/', views.OpinionesProducto.as_view(), name='opiniones'),
+    path('opiniones/<id>', views.OpinionesProductoId.as_view(), name='opiniones_id')
 
 ]
