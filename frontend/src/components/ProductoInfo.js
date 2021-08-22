@@ -8,6 +8,12 @@ import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
+import ToggleButton from 'react-bootstrap/ToggleButton'
+import Alert from 'react-bootstrap/Alert'
+
+import StarOutlineIcon from '@material-ui/icons/StarOutline';
+import StarIcon from '@material-ui/icons/Star';
 
 import axiosInstance from "../axiosApi";
 
@@ -20,7 +26,14 @@ class ProductoInfo extends Component{
         this.state = {
             id: parseInt(this.props.match.params['id']),
             mostrarModalEliminar: false,
-            cantidadCompra: 1
+            cantidadCompra: 1,
+
+            modalAniadirComentarioVisible: false,
+            valoracionNumerica: 0,
+            titulo: "",
+            descripcion: "",
+            mensajeErrorAniadirComentarioVisible: false,
+            mensajeErrorAniadirComentario: ""
         }
     }
 
@@ -54,6 +67,49 @@ class ProductoInfo extends Component{
         this.props.setCarrito(carrito)
     }
 
+    mostrarModalAniadirComentario = () => {
+        this.setState( { modalAniadirComentarioVisible: true, valoracionNumerica: 0, titulo: "", descripcion: "", mensajeErrorAniadirComentarioVisible: false } )
+    }
+
+    ocultarModalAniadirComentario = () => {
+        this.setState( { modalAniadirComentarioVisible: false, mensajeErrorAniadirComentarioVisible: false } )
+    }
+
+    setValoracionNumerica = (num) => {
+        this.setState( { valoracionNumerica: num } )
+    }
+
+    handleGuardarComentario = (event) => {
+        event.preventDefault()
+
+        if (this.state.valoracionNumerica === 0){
+            this.setState( { mensajeErrorAniadirComentarioVisible: true, mensajeErrorAniadirComentario: "Seleccione una valoración numérica." } )
+        }
+        else{
+            let datos = { producto: this.state.id,
+                          valoracion_numerica: this.state.valoracionNumerica,
+                          titulo: this.state.titulo,
+                          descripcion: this.state.descripcion }
+
+            axiosInstance.post('/opiniones/', datos).then(
+                result => {
+                    this.props.actualizarCatalogo()
+                    this.setState( { modalAniadirComentarioVisible: false, mensajeErrorAniadirComentarioVisible: false } )
+                }
+            ).catch (error => {
+                console.log(error)
+                this.setState( { mensajeErrorAniadirComentarioVisible: true, mensajeErrorAniadirComentario: "No se ha podido añadir el comentario." } )
+            })
+        }
+    }
+
+    handleChangeTitulo = (event) => {
+        this.setState( { titulo: event.target.value } )
+    }
+
+    handleChangeDescripcion = (event) => {
+        this.setState( { descripcion: event.target.value } )
+    }
 
     render() {
 
@@ -115,25 +171,26 @@ class ProductoInfo extends Component{
 
         return (
             <>
-                <Modal show={this.state.mostrarModalEliminar} onHide={this.ocultarModalEliminar}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Eliminar el producto</Modal.Title>
-                    </Modal.Header>
-                                    
-                    <Modal.Body>
-                        <p>¿Está seguro de que quiere eliminar el producto?</p>
-                    </Modal.Body>
-                                    
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
-                        <Button variant="danger" onClick={this.eliminarProducto}>Sí</Button>
-                    </Modal.Footer>
-                </Modal>
-
                 <Row>
                     <Col>
                         <Card>
                             <Card.Img variant="top" src={"http://localhost:8000" + producto.imagen} />
+                        </Card>
+
+                        <Card className="mt-3">
+                            <Card.Body>
+                                <Card.Title><h3 className="mb-4">Opiniones</h3></Card.Title>
+
+                                { this.props.usuarioLogueado['is_staff'] ? 
+                                    null
+                                :
+                                <Row className="mt-4">
+                                        <Col>
+                                            <Button variant="secondary" onClick={this.mostrarModalAniadirComentario}>Añadir opinión</Button>
+                                        </Col>
+                                </Row>
+                                }                   
+                            </Card.Body>
                         </Card>
                     </Col>
 
@@ -181,6 +238,109 @@ class ProductoInfo extends Component{
                         </Card>
                     </Col>
                 </Row>
+
+                <Modal show={this.state.mostrarModalEliminar} onHide={this.ocultarModalEliminar}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar el producto</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar el producto?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarProducto}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.modalAniadirComentarioVisible} onHide={this.ocultarModalAniadirComentario}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Añadir un comentario</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                    <Form id="formAniadirComentario" onSubmit={this.handleGuardarComentario}>
+
+                        <Form.Group controlId="formNombre">
+                            <Row>
+                                <Col>
+                                    <Form.Label>Valoración numérica</Form.Label>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <ToggleButtonGroup type="checkbox" >
+
+                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(1)}>
+                                            { this.state.valoracionNumerica >= 1 ?
+                                            <StarIcon />
+                                            :
+                                            <StarOutlineIcon /> }
+                                        </ToggleButton>
+
+                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(2)}>
+                                        { this.state.valoracionNumerica >= 2 ?
+                                            <StarIcon />
+                                            :
+                                            <StarOutlineIcon /> }                                
+                                        </ToggleButton>
+
+                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(3)}>
+                                        { this.state.valoracionNumerica >= 3 ?
+                                            <StarIcon />
+                                            :
+                                            <StarOutlineIcon /> }                                
+                                        </ToggleButton>
+
+                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(4)}>
+                                        { this.state.valoracionNumerica >= 4 ?
+                                            <StarIcon />
+                                            :
+                                            <StarOutlineIcon /> }                                
+                                        </ToggleButton>
+
+                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(5)}>
+                                        { this.state.valoracionNumerica === 5 ?
+                                            <StarIcon />
+                                            :
+                                            <StarOutlineIcon /> }                                
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Col>
+                            </Row>
+                        </Form.Group>
+
+                        <Form.Group controlId="formNombre">
+                            <Form.Label>Título</Form.Label>
+                            <Form.Control placeholder="Introduzca el título del comentario" value={this.state.tituloFormulario} 
+                                        name="nombre" onChange={this.handleChangeTitulo} required />
+                        </Form.Group>
+
+                        <Form.Group controlId="formDescripcion">
+                            <Form.Label>Descripción</Form.Label>
+                            <Form.Control placeholder="Introduzca la descripción" value={this.state.descripcionFormulario} 
+                                        name="descripcion" onChange={this.handleChangeDescripcion} as="textarea" rows="5" required />
+                        </Form.Group>
+                        </Form>
+
+                        { this.state.mensajeErrorAniadirComentarioVisible ? 
+                            <Alert variant="danger">
+                                <Alert.Heading>Error al añadir el comentario.</Alert.Heading>
+                                <p>
+                                    { this.state.mensajeErrorAniadirComentario }
+                                </p>
+                            </Alert>
+                            : null
+                        }
+
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalAniadirComentario}>Cerrar</Button>
+                        <Button variant="primary" form="formAniadirComentario" type="submit">Guardar</Button>
+                    </Modal.Footer>
+                </Modal>            
             </>
         )
     }

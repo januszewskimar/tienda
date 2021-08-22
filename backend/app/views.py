@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import ProductoPedido, Usuario, Producto, Tienda, Direccion, PedidoEntregaTienda, PedidoEntregaPostal, Pedido
+from .models import OpinionProducto, ProductoPedido, Usuario, Producto, Tienda, Direccion, PedidoEntregaTienda, PedidoEntregaPostal, Pedido
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ import random
 import string
 
 
-from .serializers import SerializadorPedido, SerializadorProductoPedido, SerializadorPedidoEntregaTienda, SerializadorPedidoEntregaPostal, SerializadorProducto, SerializadorUsuario, SerializadorTienda
+from .serializers import SerializadorOpinionProducto, SerializadorPedido, SerializadorProductoPedido, SerializadorPedidoEntregaTienda, SerializadorPedidoEntregaPostal, SerializadorProducto, SerializadorUsuario, SerializadorTienda
 
 
 class Usuarios(APIView):
@@ -343,3 +343,25 @@ class PedidosId(APIView):
         pedido.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OpinionesProducto(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        if request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        if OpinionProducto.objects.filter(usuario=request.user.id, producto=request.data['producto']).count() >= 1:
+                return Response(status=status.HTTP_409_CONFLICT)
+
+        request.data['usuario'] = request.user.id
+
+        print(request.data)
+
+        serializador = SerializadorOpinionProducto(data=request.data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_201_CREATED)
+        print(serializador.errors)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)

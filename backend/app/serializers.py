@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import Direccion, PedidoEntregaTienda, Tienda, Usuario, Producto, Pedido, PedidoEntregaPostal, PedidoEntregaTienda, ProductoPedido
+from .models import Direccion, PedidoEntregaTienda, Tienda, Usuario, Producto, Pedido, PedidoEntregaPostal, PedidoEntregaTienda, ProductoPedido, OpinionProducto
 
 class SerializadorUsuario(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
@@ -102,3 +102,10 @@ class SerializadorPedidoEntregaPostal(SerializadorPedido):
         dir = Direccion.objects.create(**direccion)
         pedido = PedidoEntregaPostal.objects.create(direccion=dir, **validated_data)
         return pedido
+
+
+class SerializadorOpinionProducto(serializers.ModelSerializer):
+
+    class Meta:
+        model = OpinionProducto
+        fields = ['id', 'producto', 'usuario', 'valoracion_numerica', 'titulo', 'descripcion', 'fecha_creacion', 'fecha_modificacion']

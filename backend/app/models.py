@@ -64,3 +64,13 @@ class ProductoPedido(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
     precio = models.DecimalField(max_digits=8, decimal_places=2)
     cantidad = models.PositiveSmallIntegerField()
+
+
+class OpinionProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    valoracion_numerica = models.DecimalField(max_digits=1, decimal_places=0)
+    titulo = models.CharField(max_length=50)
+    descripcion = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_modificacion = models.DateTimeField(auto_now=True)
