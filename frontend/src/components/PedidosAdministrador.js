@@ -27,6 +27,8 @@ class PedidosAdministrador extends Component {
             mostrarMensajeExitoEstado: false,
             mostrarMensajeErrorEstado: false,
             mensajeErrorEstado: "",
+            modalEliminarVisible: false,
+            pedidoAEliminar: null,
 
             filtroEstado: "Todos",
             filtroCliente: "",
@@ -183,6 +185,24 @@ class PedidosAdministrador extends Component {
         this.setState( { filtroEstado: "Todos", filtroCliente: "", filtroFechaDesde: "", filtroFechaHasta: ""} );
     }
 
+    ocultarModalEliminar = () => {
+        this.setState({modalEliminarVisible: false, pedidoAEliminar: null})
+    }
+
+    mostrarModalEliminar = (id) => {
+        this.setState({modalEliminarVisible: true, pedidoAEliminar: id})
+    }
+
+    eliminarPedido = () => {
+        axiosInstance.delete('/pedidos/' + this.state.pedidoAEliminar)
+        .then( result => {
+                this.actualizarPedidos();
+                this.ocultarModalEliminar();
+            }).catch (error => {
+                console.log(error)
+            })
+    }
+
     render() {
         let pedidosFiltrados = this.state.pedidos
         pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
@@ -327,6 +347,11 @@ class PedidosAdministrador extends Component {
                                     Cambiar
                                 </Button>
                             </Form>
+
+                            <Button variant="danger" className="mt-4" onClick={() => this.mostrarModalEliminar(elemento.id)}>
+                                    Eliminar pedido
+                                </Button>
+                            
                         </Card.Body>
                     </Accordion.Collapse>
                 </Card>
@@ -400,6 +425,21 @@ class PedidosAdministrador extends Component {
                         <Button variant="primary" onClick={this.cerrarMensajeExitoEstado}>
                             Cerrar
                         </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.modalEliminarVisible} onHide={this.ocultarModalEliminar}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar el pedido</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar el pedido?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarPedido}>Sí</Button>
                     </Modal.Footer>
                 </Modal>
             </>
