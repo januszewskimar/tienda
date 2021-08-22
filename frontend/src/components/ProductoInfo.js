@@ -234,6 +234,46 @@ class ProductoInfo extends Component{
             }
         }
 
+        let valoracionMedia = 0
+        let suma = 0
+        if (producto['opiniones'].length > 0){
+            for (let i = 0 ; i < producto['opiniones'].length ; i++){
+                suma += parseInt(producto['opiniones'][i]['valoracion_numerica'])
+            }
+            valoracionMedia = suma / producto['opiniones'].length
+        }
+
+        let fragmentoValoracionMedia =  <Row className="mb-5">
+                                                <Col>
+                                                    <h3 className="mb-3">Valoración media</h3>
+
+                                                    { valoracionMedia >= 1 ?
+                                                        <StarIcon/>
+                                                    : <StarOutlineIcon/>
+                                                    }
+
+                                                    { valoracionMedia >= 2 ?
+                                                        <StarIcon/>
+                                                    : <StarOutlineIcon/>
+                                                    }
+
+                                                    { valoracionMedia >= 3 ?
+                                                        <StarIcon/>
+                                                    : <StarOutlineIcon/>
+                                                    }
+
+                                                    { valoracionMedia >= 4 ?
+                                                        <StarIcon/>
+                                                    : <StarOutlineIcon/>
+                                                    }
+                                                    
+                                                    { valoracionMedia >= 5 ?
+                                                        <StarIcon/>
+                                                    : <StarOutlineIcon/>
+                                                    }
+                                            </Col>
+                                        </Row>
+
         return (
             <>
                 <Row>
@@ -244,6 +284,11 @@ class ProductoInfo extends Component{
 
                         <Card className="mt-3">
                             <Card.Body>
+                                { producto.opiniones.length > 0 ?
+                                  fragmentoValoracionMedia
+                                :
+                                null}     
+
                                 <Card.Title><h3 className="mb-4">Opiniones</h3></Card.Title>
 
                                 { this.props.usuarioLogueado['is_staff'] || haPublicadoOpinion
@@ -258,7 +303,7 @@ class ProductoInfo extends Component{
                                 }
 
                                 { producto.opiniones.length > 0 ?
-                                  opiniones 
+                                  opiniones
                                 :
                                 <h5 className="mt-5">Todavía no hay opiniones sobre este producto</h5>}           
                             </Card.Body>
