@@ -379,7 +379,7 @@ class OpinionesProductoId(APIView):
         except OpinionProducto.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        if not request.user.id != opinion.usuario:
+        if request.user.id != opinion.usuario.id:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializador = SerializadorOpinionProducto(opinion, data=request.data, partial=True)
@@ -388,3 +388,16 @@ class OpinionesProductoId(APIView):
             serializador.save()
             return Response(serializador.data, status=status.HTTP_200_OK)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        try:
+            opinion = OpinionProducto.objects.get(pk=id)
+        except OpinionProducto.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if not request.user.is_staff and opinion.usuario.id != request.user.id:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        opinion.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

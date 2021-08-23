@@ -25,8 +25,10 @@ class ProductoInfo extends Component{
         super(props)
         this.state = {
             id: parseInt(this.props.match.params['id']),
-            mostrarModalEliminar: false,
+            
             cantidadCompra: 1,
+
+            modalEliminarProductoVisible: false,
 
             modalAniadirOpinionVisible: false,
             mensajeErrorAniadirOpinionVisible: false,
@@ -39,15 +41,18 @@ class ProductoInfo extends Component{
             valoracionNumerica: 0,
             titulo: "",
             descripcion: "",
+
+            modalEliminarOpinionVisible: false,
+            opinionAEliminar: null
         }
     }
 
-    ocultarModalEliminar = () => {
-        this.setState({mostrarModalEliminar: false})
+    ocultarModalEliminarProducto = () => {
+        this.setState( { modalEliminarProductoVisible: false } )
     }
 
-    mostrarModalEliminar = () => {
-        this.setState({mostrarModalEliminar: true})
+    mostrarModalEliminarProducto = () => {
+        this.setState( { modalEliminarProductoVisible: true } )
     }
 
     eliminarProducto = () => {
@@ -177,6 +182,26 @@ class ProductoInfo extends Component{
         return opinion
     }
 
+    mostrarModalEliminarOpinion = (id) => {
+        this.setState( { modalEliminarOpinionVisible: true, opinionAEliminar: id } )
+    }
+
+    ocultarModalEliminarOpinion = () => {
+        this.setState( { modalEliminarOpinionVisible: false, mensajeErrorEliminarOpinionVisible: false, opinionAEliminar: null } )
+    }
+
+    eliminarOpinion = () => {
+        axiosInstance.delete('/opiniones/' + this.state.opinionAEliminar).then(
+            result => {
+                this.props.actualizarCatalogo()
+                this.setState( { modalEliminarOpinionVisible: false, mensajeErrorEliminarOpinionVisible: false } )
+            }
+        ).catch (error => {
+            console.log(error)
+            this.setState( { mensajeErrorEliminarOpinionVisible: true, mensajeErrorEliminarOpinion: "No se ha podido eliminar la opinión." } )
+        })
+    }
+
     render() {
 
         let id = this.state.id
@@ -204,7 +229,7 @@ class ProductoInfo extends Component{
                                             </Link>
                                         </Col>
                                         <Col className="col-auto">
-                                            <Button variant="danger" onClick={this.mostrarModalEliminar}>Eliminar producto</Button>
+                                            <Button variant="danger" onClick={this.mostrarModalEliminarProducto}>Eliminar producto</Button>
                                         </Col>
                                     </Row>
         }
@@ -297,6 +322,7 @@ class ProductoInfo extends Component{
         )})
         
         let haPublicadoOpinion = false
+        let opinionUsuario = this.getOpinionUsuario();
         let cont = true
         for (let i = 0 ; cont && i < producto['opiniones'].length ; i++){
             if (this.props.usuarioLogueado['id'] === producto['opiniones'][i]['usuario']){
@@ -374,9 +400,14 @@ class ProductoInfo extends Component{
                                 }
 
                                 { haPublicadoOpinion ?
-                                    <Button variant="secondary" onClick={this.mostrarModalModificarOpinion}>Modificar mi opinión</Button>
+                                    <>
+                                        <Button variant="secondary" onClick={this.mostrarModalModificarOpinion}>Modificar mi opinión</Button>
+                                        <Button variant="danger" className="ml-3" onClick={() => this.mostrarModalEliminarOpinion(opinionUsuario['id'])}>
+                                            Eliminar mi opinión
+                                        </Button>
+                                    </>
                                     :
-                                    null                         
+                                    null
                                 }
 
                                 { producto.opiniones.length > 0 ?
@@ -432,7 +463,7 @@ class ProductoInfo extends Component{
                     </Col>
                 </Row>
 
-                <Modal show={this.state.mostrarModalEliminar} onHide={this.ocultarModalEliminar}>
+                <Modal show={this.state.modalEliminarProductoVisible} onHide={this.ocultarModalEliminarProducto}>
                     <Modal.Header closeButton>
                         <Modal.Title>Eliminar el producto</Modal.Title>
                     </Modal.Header>
@@ -442,7 +473,7 @@ class ProductoInfo extends Component{
                     </Modal.Body>
                                     
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminarProducto}>No</Button>
                         <Button variant="danger" onClick={this.eliminarProducto}>Sí</Button>
                     </Modal.Footer>
                 </Modal>
@@ -622,6 +653,31 @@ class ProductoInfo extends Component{
                     <Button variant="primary" form="formModificarOpinion" type="submit">Guardar</Button>
                 </Modal.Footer>
             </Modal>    
+
+            <Modal show={this.state.modalEliminarOpinionVisible} onHide={this.ocultarModalEliminarOpinion}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar la opinión</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar la opinión?</p>
+
+                        { this.state.mensajeErrorEliminarOpinionVisible ? 
+                        <Alert variant="danger">
+                            <Alert.Heading>Error al eliminar la opinión.</Alert.Heading>
+                            <p>
+                                { this.state.mensajeErrorEliminarOpinion }
+                            </p>
+                        </Alert>
+                        : null
+                    }
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminarOpinion}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarOpinion}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
             </>
         )
     }
