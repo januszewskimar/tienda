@@ -26,7 +26,7 @@ class UsuarioEditar extends Component {
     handleSubmit(event){
         event.preventDefault()
         this.setState({ error: false, mensajeError: "" })
-        axiosInstance.put('/usuarios/' + this.state.id, {
+        axiosInstance.patch('/usuarios/' + this.state.id, {
             email: this.state.correo,
             first_name: this.state.nombre,
             last_name: this.state.apellidos,

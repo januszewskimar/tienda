@@ -46,28 +46,41 @@ class Usuarios(APIView):
 class UsuariosId(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def put(self, request, id, format='json'):
-        if request.user.id != int(id):
+    def get(self, request, id):
+        if request.user.id != int(id) and not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            usuario = Usuario.objects.get(id=id)
-            if "email" in request.data:
-                if usuario.email != request.data['email']:
-                    if Usuario.objects.filter(email=request.data['email']).count() == 1:
-                        return Response(status=status.HTTP_409_CONFLICT)
-                usuario.email = request.data['email']
-            if "first_name" in request.data:
-                usuario.first_name = request.data['first_name']
-            if "last_name" in request.data:
-                usuario.last_name = request.data['last_name']
-            if "password" in request.data:
-                usuario.set_password(request.data['password'])
 
-            try:
-                usuario.save()
-                return Response(status=status.HTTP_200_OK)
-            except Exception as e:
+        try:
+            usuario = Usuario.objects.get(id=id)
+        except Usuario.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializador = SerializadorUsuario(usuario, many=False)
+        return Response(serializador.data)
+        
+    def patch(self, request, id, format='json'):
+        if request.user.id != int(id) and not request.user.is_staff:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            usuario = Usuario.objects.get(id=id)
+        except Usuario.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if Usuario.email != request.data['email']:
+            if Usuario.objects.filter(email=request.data['email']).count() == 1:
+                return Response(status=status.HTTP_409_CONFLICT)
+        
+        if "is_staff" in request.data:
+            if request.data['is_staff'] != usuario.is_staff:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializador = SerializadorUsuario(usuario, data=request.data, partial=True)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_200_OK)
+        return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self, request, id, format='json'):

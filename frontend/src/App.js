@@ -26,6 +26,7 @@ import PedidosAdministrador from "./components/PedidosAdministrador"
 
 import Usuarios from "./components/Usuarios"
 import UsuarioAniadir from "./components/UsuarioAniadir"
+import UsuarioEditarAdmin from "./components/UsuarioEditarAdmin"
 
 
 
@@ -134,7 +135,7 @@ class App extends Component {
 
     render() {
         let inicioSesion = <InicioSesion actualizarTodo={this.actualizarTodo} vaciarCarrito={this.vaciarCarrito} />
-        let usuarioAniadir, usuarios, realizarPedido, carrito, pedidos,
+        let usuarioEditarAdmin, usuarioAniadir, usuarios, realizarPedido, carrito, pedidos,
             usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, aniadirProducto, productoInfo, productoEditar, tiendas, tiendaAniadir, tiendaEditar
 
         if (this.state.usuarioLogueado != null){
@@ -155,6 +156,7 @@ class App extends Component {
                 pedidos = <PedidosAdministrador catalogo={this.state.catalogo} tiendas={this.state.tiendas} usuarios={this.state.usuarios} /> 
                 usuarios = <Usuarios usuarios={this.state.usuarios} />
                 usuarioAniadir = <UsuarioAniadir actualizarUsuarios={this.actualizarUsuarios} />
+                usuarioEditarAdmin = <UsuarioEditarAdmin />
                 realizarPedido = carrito = inicioSesion
             }
             else{
@@ -162,12 +164,12 @@ class App extends Component {
                 realizarPedido = <RealizarPedido carrito={this.state.carrito} setCarrito={this.setCarrito} usuarioLogueado={this.state.usuarioLogueado}
                                                  tiendas={this.state.tiendas} />
                 pedidos = <PedidosCliente usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} tiendas={this.state.tiendas} /> 
-                usuarioAniadir = usuarios = tiendaEditar = tiendaAniadir = productoEditar = aniadirProducto = inicioSesion
+                usuarioEditarAdmin = usuarioAniadir = usuarios = tiendaEditar = tiendaAniadir = productoEditar = aniadirProducto = inicioSesion
             }
 
         }
         else{
-            usuarioAniadir = usuarios = pedidos = realizarPedido = carrito = tiendaEditar = tiendaAniadir = tiendas = productoEditar 
+            usuarioEditarAdmin =usuarioAniadir = usuarios = pedidos = realizarPedido = carrito = tiendaEditar = tiendaAniadir = tiendas = productoEditar 
             = productoInfo = catalogo = aniadirProducto = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion
         }
 
@@ -224,6 +226,9 @@ class App extends Component {
                     </Route>
                     <Route exact path={"/usuarios/aniadir"}>
                         { usuarioAniadir }
+                    </Route>
+                    <Route exact path={"/usuarios/editar/:id"}>
+                        { usuarioEditarAdmin }
                     </Route>
                     <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
                 </Switch>
