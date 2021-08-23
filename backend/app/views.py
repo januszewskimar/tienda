@@ -18,8 +18,11 @@ class Usuarios(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format='json'):
-        print(request.data)
-        print(type(request.data))
+        if not request.user.is_staff:
+            if 'is_staff' in request.data:
+                if request.data['is_staff']:
+                    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         serializador = SerializadorUsuario(data=request.data)
         if serializador.is_valid():
             if Usuario.objects.filter(email=serializador.validated_data['email']).count() == 1:

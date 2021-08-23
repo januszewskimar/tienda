@@ -60,6 +60,10 @@ class Cabecera extends Component {
                                     <LinkContainer to="/catalogo"><Nav.Link>Catálogo</Nav.Link></LinkContainer>
                                     <LinkContainer to="/tiendas"><Nav.Link>Tiendas</Nav.Link></LinkContainer>
                                     <LinkContainer to="/pedidos"><Nav.Link>Pedidos</Nav.Link></LinkContainer>
+                                    { this.props.usuarioLogueado['is_staff'] ?
+                                        <LinkContainer to="/usuarios"><Nav.Link>Usuarios</Nav.Link></LinkContainer>
+                                        : null 
+                                    }
                                 </>
         }
         return (
