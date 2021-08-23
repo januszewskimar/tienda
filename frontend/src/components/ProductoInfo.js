@@ -314,6 +314,17 @@ class ProductoInfo extends Component{
                                 </Col>
                             </Row>
 
+                            { this.props.usuarioLogueado['is_staff'] ?
+                                <Row>
+                                    <Col>
+                                        <Button variant="danger" className="mt-4" onClick={() => this.mostrarModalEliminarOpinion(elemento['id'])}>
+                                            Eliminar opinión
+                                        </Button>
+                                    </Col>
+                                </Row>
+                                : null
+                            }
+
 
                         </Card.Body>
                     </Card>
