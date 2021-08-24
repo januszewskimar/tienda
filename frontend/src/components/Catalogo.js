@@ -4,24 +4,57 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import Form from 'react-bootstrap/Form'
 
 
 
 class Catalogo extends Component {
 
+    constructor(props){
+        super(props)
+
+        this.state = { filtroNombre: "" }
+    }
+
+    handleChangeFiltroNombre = (event) => {
+        this.setState( { filtroNombre: event.target.value } )
+    }
+
+    filtrarNombre = (productos) => {
+        if (this.state.filtroNombre === ""){
+            return productos
+        }
+
+        let p = [];
+        for (let i = 0 ; i < productos.length ; i++){
+            if (productos[i]['nombre'].toLowerCase().includes(this.state.filtroNombre.toLowerCase())) {
+                p.push(productos[i]);
+            }
+        }
+        return p;
+    }
+
     render() {
+
+        if (this.props.catalogo === null || this.props.usuarioLogueado === null){        
+            return null;
+        }
+
         let productos
 
-        if (this.props.catalogo != null){        
-            let arrays = [], tamanio = 3
+        let productosFiltrados = this.props.catalogo
+        productosFiltrados = this.filtrarNombre(productosFiltrados)
 
-            for (let i = 0 ; i < this.props.catalogo.length ; i += tamanio){
-                arrays.push(this.props.catalogo.slice(i, i + tamanio))
+        if (productosFiltrados.length != 0){
+           let arrays = [], tamanio = 3
+
+            for (let i = 0 ; i < productosFiltrados.length ; i += tamanio){
+                arrays.push(productosFiltrados.slice(i, i + tamanio))
             }
 
-            productos = arrays.map(grupo => (
-                <Row className="d-flex mb-5 justify-content-center">
-                    {
+                productos = arrays.map(grupo => (
+                    <Row className="d-flex mb-5 justify-content-center">
+                        {
                         grupo.map(elemento => (
                             <Col className="d-flex justify-content-center">
                                 <Card className="text-center" style={{ width: '20rem' }}>
@@ -43,7 +76,7 @@ class Catalogo extends Component {
             ))
         }
         else{
-            productos = <h4>No hay productos en el catálgo</h4>
+            productos = <h4>No se han encontrado resultados</h4>
         }
 
         let botonAniadir
@@ -59,6 +92,9 @@ class Catalogo extends Component {
         return (
             <>
                 <h2 className="mb-5">Catálogo</h2>
+
+                <Form.Control className="mb-5" placeholder="Introduzca el nombre para buscar"
+                              value={this.state.filtroNombre} onChange={this.handleChangeFiltroNombre} />
 
                 { productos }
 
