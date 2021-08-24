@@ -17,6 +17,7 @@ class UsuarioEditarAdmin extends Component{
             email: "",
             first_name: "",
             last_name: "",
+            datosCargados: false,
 
             mensajeError:"",
             modalErrorVisible: false,
@@ -25,16 +26,27 @@ class UsuarioEditarAdmin extends Component{
     }
 
     componentDidMount(){
-        axiosInstance.get('/usuarios/' + this.props.match.params['id']).then(
-            result => {
-                this.setState( { email: result.data['email'],
-                                 first_name: result.data['first_name'],
-                                 last_name: result.data['last_name'] } )
+        this.cargarDatos()
+    }
+
+    componentDidUpdate(){
+        this.cargarDatos()
+    }
+
+    cargarDatos = () => {
+        if (!this.state.datosCargados){
+            if (this.props.usuarios != null){
+                for (let i = 0 ; i < this.props.usuarios.length ; i++){
+                    if (parseInt(this.props.usuarios[i]['id']) === parseInt(this.props.match.params['id'])){
+                        this.setState( { datosCargados: true,
+                                         email: this.props.usuarios[i]['email'],
+                                         first_name: this.props.usuarios[i]['first_name'],
+                                         last_name: this.props.usuarios[i]['last_name'] } )
+                    }
+                }
+
             }
-        ).catch (error => {
-            console.log(error)
-        })
-        
+        }
     }
     
 

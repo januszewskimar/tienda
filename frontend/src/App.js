@@ -156,7 +156,7 @@ class App extends Component {
                 pedidos = <PedidosAdministrador catalogo={this.state.catalogo} tiendas={this.state.tiendas} usuarios={this.state.usuarios} /> 
                 usuarios = <Usuarios usuarios={this.state.usuarios} />
                 usuarioAniadir = <UsuarioAniadir actualizarUsuarios={this.actualizarUsuarios} />
-                usuarioEditarAdmin = <UsuarioEditarAdmin />
+                usuarioEditarAdmin = <UsuarioEditarAdmin usuarios={this.state.usuarios} actualizarUsuarios={this.actualizarUsuarios} />
                 realizarPedido = carrito = inicioSesion
             }
             else{

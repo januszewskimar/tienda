@@ -45,18 +45,6 @@ class Usuarios(APIView):
 
 class UsuariosId(APIView):
     permission_classes = (permissions.AllowAny,)
-
-    def get(self, request, id):
-        if request.user.id != int(id) and not request.user.is_staff:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        try:
-            usuario = Usuario.objects.get(id=id)
-        except Usuario.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializador = SerializadorUsuario(usuario, many=False)
-        return Response(serializador.data)
         
     def patch(self, request, id, format='json'):
         if request.user.id != int(id) and not request.user.is_staff:
