@@ -20,6 +20,7 @@ class Usuarios extends Component {
     constructor(props){
         super(props)
         this.state = { filtroNombreCorreo: "",
+                       filtroTipo: "Cualquier tipo",
             
                        modalEliminarCuentaVisible: false,
                        idUsuarioAEliminar: null,
@@ -81,6 +82,26 @@ class Usuarios extends Component {
         this.setState( { filtroNombreCorreo: event.target.value } )
     }
 
+    filtrarTipo = (usuarios) => {
+        if (this.state.filtroTipo === "Cualquier tipo"){
+            return usuarios;
+        }
+        else{
+            let u = [];
+            for (let i = 0 ; i < usuarios.length ; i++){
+                if ( (this.state.filtroTipo === "Clientes" && !usuarios[i]['is_staff']) ||
+                     (this.state.filtroTipo === "Administradores" && usuarios[i]['is_staff'])){
+                    u.push(usuarios[i]);
+                }
+            }
+            return u;
+        }
+    }
+
+    handleChangeFiltroTipo = (event) => {
+        this.setState( { filtroTipo: event.target.value } )
+    }
+
     restablecerFiltros = () => {
         this.setState( { filtroNombreCorreo: "" } )
     }
@@ -92,6 +113,7 @@ class Usuarios extends Component {
 
         let usuariosFiltrados = this.props.usuarios
         usuariosFiltrados = this.filtrarNombreCorreo(usuariosFiltrados)
+        usuariosFiltrados = this.filtrarTipo(usuariosFiltrados)
 
         let usuarios = usuariosFiltrados.map(elemento => (
             <tr>
@@ -129,40 +151,48 @@ class Usuarios extends Component {
             <>
                 <h2 className="mb-5">Usuarios</h2>
 
-                    
+                <Row className="mb-4 d-flex">
 
-                        <Row className="mb-4 d-flex">
-
-                        <Col>
-
+                    <Col>
                         <Form.Control className="" placeholder="Introduzca el correo o nombre para buscar"
-                                      value={this.state.filtroNombreCorreo} onChange={this.handleChangeFiltroNombreCorreo} />
-                        </Col>
+                                            value={this.state.filtroNombreCorreo} onChange={this.handleChangeFiltroNombreCorreo} />
+                    </Col>
 
-                        <Col xs="auto">
+                    <Col xs="auto">
+                        <Form.Control className="" as="select" value={this.state.filtroTipo} 
+                                    onChange={this.handleChangeFiltroTipo}>
+                            <option>Cualquier tipo</option>
+                            <option>Clientes</option>
+                            <option>Administradores</option>
+                        </Form.Control>
+                    </Col>
+
+                    <Col xs="auto">
                         <Button className="float-right" variant="secondary" onClick={this.restablecerFiltros}>
                             Restablecer filtros
                         </Button>
-                        </Col>
+                    </Col>
 
-                        </Row>
+                </Row>
 
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>Correo</th>
-                                    <th>Nombre</th>
-                                    <th>Apellidos</th>
-                                    <th>Tipo de usuario</th>
-                                    <th>Editar</th>
-                                </tr>
-                            </thead>
+                { usuarios.length > 0 ?
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>Correo</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Tipo de usuario</th>
+                                <th>Editar</th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                                { usuarios }
-                            </tbody>
+                        <tbody>
+                            { usuarios }
+                        </tbody>
 
-                        </Table>
+                    </Table>
+                    : <h4 className="mt-5">No se han encontrado resultados</h4> }
 
                 <Row className="mt-5">
                     <Col>
