@@ -40,18 +40,16 @@ class Cabecera extends Component {
             parteDerecha = <>
                                 { !(this.props.usuarioLogueado['is_staff']) ?
                                     <LinkContainer to="/carrito">
-                                        <Nav.Link>
-                                            <Button variant="link">
+                                        <Nav.Link className="mr-3">
                                                 <ShoppingCartOutlinedIcon />
-                                            </Button>
                                         </Nav.Link>
                                     </LinkContainer>
                                 : null}
-                                <Navbar.Text className="mr-2">
+                                <Navbar.Text className="mr-2">Sesión iniciada como: </Navbar.Text>
+                                <Navbar.Text className="mr-4">
                                     <LinkContainer to="/usuario/info">
-                                        <Button variant="link">{nombreCompleto}</Button>
-                                    </LinkContainer>
-                                </Navbar.Text>
+                                        <a>{nombreCompleto}</a>
+                                    </LinkContainer></Navbar.Text>
                                 <Button variant="outline-secondary" onClick={this.cerrarSesion}>Cerrar sesión</Button>
 
                            </>
