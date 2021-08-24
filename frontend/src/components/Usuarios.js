@@ -6,9 +6,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
+import Dropdown from 'react-bootstrap/Dropdown'
 
 import axiosInstance from "../axiosApi";
 
@@ -126,22 +126,28 @@ class Usuarios extends Component {
                         "Cliente" }
                 </td>
                 <td>
-                    <ButtonGroup>
-                        <LinkContainer to={"/usuarios/editar/" + elemento.id }>
-                            <Button variant="outline-primary" size="sm">Editar datos</Button>
-                        </LinkContainer>
+                    <Dropdown>
+                        <Dropdown.Toggle variant="outline-secondary" size="sm">
+                            Editar
+                        </Dropdown.Toggle>
 
-                        <LinkContainer to={"/usuarios/cambiar-contrasenia/" + elemento.id }>
-                            <Button variant="outline-secondary" size="sm">Cambiar contraseña</Button>
-                        </LinkContainer>
+                        <Dropdown.Menu>
+                            <LinkContainer to={"/usuarios/editar/" + elemento.id }>
+                                <Dropdown.Item>Editar datos</Dropdown.Item>
+                            </LinkContainer>
 
-                        { this.props.usuarioLogueado['id'] !== elemento['id'] ?
-                            <Button variant="outline-danger" size="sm" onClick={() => this.mostrarModalEliminarCuenta(elemento['id'])}>
-                                Eliminar cuenta
-                            </Button>
-                            : null
-                        }
-                    </ButtonGroup>
+                            <LinkContainer to={"/usuarios/cambiar-contrasenia/" + elemento.id }>
+                                <Dropdown.Item>Cambiar contraseña</Dropdown.Item>
+                            </LinkContainer>
+
+                            { this.props.usuarioLogueado['id'] !== elemento['id'] ?
+                                <Dropdown.Item onClick={() => this.mostrarModalEliminarCuenta(elemento['id'])}>
+                                    Eliminar cuenta
+                                </Dropdown.Item>
+                                : null
+                            }
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </td>
             </tr>
         ))
