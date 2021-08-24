@@ -18,11 +18,11 @@ axiosInstance.interceptors.response.use(
     error => {
         const originalRequest = error.config;
 
-        if (error.response.status === 401 && originalRequest.url === baseURL+'token/refrescar/') {
+        if (error.response.status === 401 && ( (originalRequest.url === baseURL+'token/refrescar/') || (originalRequest.url === '/token/refrescar/') ) ) {
             return Promise.reject(error);
         }
 
-        if (error.response.data.code === "token_not_valid" &&
+       else if (error.response.data.code === "token_not_valid" &&
             error.response.status === 401 && 
             error.response.statusText === "Unauthorized") 
             {
