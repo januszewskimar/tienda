@@ -103,7 +103,7 @@ class Usuarios extends Component {
     }
 
     restablecerFiltros = () => {
-        this.setState( { filtroNombreCorreo: "" } )
+        this.setState( { filtroNombreCorreo: "", filtroTipo: "Cualquier tipo" } )
     }
 
     render() {
