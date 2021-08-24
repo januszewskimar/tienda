@@ -155,7 +155,7 @@ class App extends Component {
                 tiendaAniadir = <TiendaAniadir tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} usuarioLogueado={this.state.usuarioLogueado} />
                 tiendaEditar = <TiendaEditar tiendas={this.state.tiendas} actualizarTiendas={this.actualizarTiendas} />
                 pedidos = <PedidosAdministrador catalogo={this.state.catalogo} tiendas={this.state.tiendas} usuarios={this.state.usuarios} /> 
-                usuarios = <Usuarios usuarios={this.state.usuarios} />
+                usuarios = <Usuarios usuarios={this.state.usuarios} usuarioLogueado={this.state.usuarioLogueado} actualizarUsuarios={this.actualizarUsuarios} />
                 usuarioAniadir = <UsuarioAniadir actualizarUsuarios={this.actualizarUsuarios} />
                 usuarioEditarAdmin = <UsuarioEditarAdmin usuarios={this.state.usuarios} actualizarUsuarios={this.actualizarUsuarios} />
                 usuarioCambiarContraseniaAdmin = <UsuarioCambiarContraseniaAdmin />

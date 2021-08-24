@@ -7,13 +7,61 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import Modal from 'react-bootstrap/Modal'
+
+import axiosInstance from "../axiosApi";
 
 
 
 
 class Usuarios extends Component {
 
+    constructor(props){
+        super(props)
+        this.state = { modalEliminarCuentaVisible: false,
+                       idUsuarioAEliminar: null,
+
+                       modalErrorEliminarCuentaVisible: false,
+                       mensajeErrorEliminarCuenta: "",
+                       modalExitoEliminarCuentaVisible: false }
+    }
+
+    mostrarModalEliminarCuenta = (id) => {
+        this.setState( { idUsuarioAEliminar: id,
+                         modalEliminarCuentaVisible: true, 
+                        } )
+    }
+
+    ocultarModalEliminarCuenta = () => {
+        this.setState( { modalEliminarCuentaVisible: false } )
+    }
+
+    ocultarModalExitoEliminarCuenta = () => {
+        this.setState( { modalExitoEliminarCuentaVisible: false } )
+    }
+
+    ocultarModalErrorEliminarCuenta = () => {
+        this.setState( { modalErrorEliminarCuentaVisible: false } )
+    }
+
+    eliminarCuenta = () => {
+        axiosInstance.delete('/usuarios/' + this.state.idUsuarioAEliminar).then(
+            result => {
+                this.props.actualizarUsuarios()
+                this.ocultarModalEliminarCuenta()
+                this.setState( { modalExitoEliminarCuentaVisible: true } )
+            }
+        ).catch (error => {
+            this.setState( { modalErrorEliminarCuentaVisible: true, mensajeErrorEliminarCuenta: "No se ha podido eliminar la cuenta." })
+            console.log(error)
+        })
+    }
+
     render() {
+        if (this.props.usuarios === null || this.props.usuarioLogueado === null){
+            return null;
+        }
+
         let usuarios = this.props.usuarios.map(elemento => (
             <tr>
                 <td>{ elemento.email }</td>
@@ -33,6 +81,13 @@ class Usuarios extends Component {
                         <LinkContainer to={"/usuarios/cambiar-contrasenia/" + elemento.id }>
                             <Button variant="outline-secondary" size="sm">Cambiar contraseña</Button>
                         </LinkContainer>
+
+                        { this.props.usuarioLogueado['id'] !== elemento['id'] ?
+                            <Button variant="outline-danger" size="sm" onClick={() => this.mostrarModalEliminarCuenta(elemento['id'])}>
+                                Eliminar cuenta
+                            </Button>
+                            : null
+                        }
                     </ButtonGroup>
                 </td>
             </tr>
@@ -67,6 +122,54 @@ class Usuarios extends Component {
                         </LinkContainer>
                     </Col>
                 </Row>
+
+
+
+                <Modal show={this.state.modalEliminarCuentaVisible} onHide={this.ocultarModalEliminarCuenta}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Eliminar la cuenta</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>¿Está seguro de que quiere eliminar la cuenta?</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalEliminarCuenta}>No</Button>
+                        <Button variant="danger" onClick={this.eliminarCuenta}>Sí</Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.modalExitoEliminarCuentaVisible} onHide={this.ocultarModalExitoEliminarCuenta}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Cuenta eliminada</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>La cuenta se ha eliminado correctamente.</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalExitoEliminarCuenta}>Cerrar</Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.modalErrorEliminarCuentaVisible} onHide={this.ocultarModalErrorEliminarCuenta}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Error al eliminar la cuenta</Modal.Title>
+                    </Modal.Header>
+                                    
+                    <Modal.Body>
+                        <p>{ this.state.mensajeErrorEliminarCuenta }</p>
+                    </Modal.Body>
+                                    
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.ocultarModalErrorEliminarCuenta}>Cerrar</Button>
+                    </Modal.Footer>
+                </Modal>
+
             </>
         );
     }

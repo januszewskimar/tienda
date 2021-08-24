@@ -72,13 +72,17 @@ class UsuariosId(APIView):
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    def delete(self, request, id, format='json'):
-        if request.user.id != int(id):
+    def delete(self, request, id):
+        if request.user.id != int(id) and not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            usuario = Usuario.objects.get(id=id)
-            usuario.delete()
-            return Response(status=status.HTTP_200_OK)
+
+        try:
+            usuario = Usuario.objects.get(pk=id)
+        except Usuario.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        usuario.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class UsuarioSesionIniciada(APIView):
