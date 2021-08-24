@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
-import PedidosAdministrador from "./PedidosAdministrador";
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 
 
@@ -24,6 +24,13 @@ class Usuarios extends Component {
                         :
                         "Cliente" }
                 </td>
+                <td>
+                    <ButtonGroup>
+                        <LinkContainer to={"/usuarios/editar/" + elemento.id }>
+                            <Button variant="outline-primary" size="sm">Editar datos</Button>
+                        </LinkContainer>
+                    </ButtonGroup>
+                </td>
             </tr>
         ))
 
@@ -39,6 +46,7 @@ class Usuarios extends Component {
                             <th>Nombre</th>
                             <th>Apellidos</th>
                             <th>Tipo de usuario</th>
+                            <th>Editar</th>
                         </tr>
                     </thead>
 
@@ -50,9 +58,9 @@ class Usuarios extends Component {
 
                 <Row className="mt-5">
                     <Col>
-                    <LinkContainer to="/usuarios/aniadir">
-                        <Button variant="primary">Añadir administrador</Button>
-                    </LinkContainer>
+                        <LinkContainer to="/usuarios/aniadir">
+                            <Button variant="primary">Añadir administrador</Button>
+                        </LinkContainer>
                     </Col>
                 </Row>
             </>
