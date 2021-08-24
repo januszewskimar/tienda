@@ -46,7 +46,7 @@ class Usuarios(APIView):
 class UsuariosId(APIView):
     permission_classes = (permissions.AllowAny,)
         
-    def patch(self, request, id, format='json'):
+    def patch(self, request, id):
         if request.user.id != int(id) and not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -55,9 +55,10 @@ class UsuariosId(APIView):
         except Usuario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        if Usuario.email != request.data['email']:
-            if Usuario.objects.filter(email=request.data['email']).count() == 1:
-                return Response(status=status.HTTP_409_CONFLICT)
+        if "email" in request.data:
+            if Usuario.email != request.data['email']:
+                if Usuario.objects.filter(email=request.data['email']).count() == 1:
+                    return Response(status=status.HTTP_409_CONFLICT)
         
         if "is_staff" in request.data:
             if request.data['is_staff'] != usuario.is_staff:

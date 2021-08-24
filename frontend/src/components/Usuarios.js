@@ -29,6 +29,10 @@ class Usuarios extends Component {
                         <LinkContainer to={"/usuarios/editar/" + elemento.id }>
                             <Button variant="outline-primary" size="sm">Editar datos</Button>
                         </LinkContainer>
+
+                        <LinkContainer to={"/usuarios/cambiar-contrasenia/" + elemento.id }>
+                            <Button variant="outline-secondary" size="sm">Cambiar contraseña</Button>
+                        </LinkContainer>
                     </ButtonGroup>
                 </td>
             </tr>
