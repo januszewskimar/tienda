@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Modal from 'react-bootstrap/Modal'
+import Form from 'react-bootstrap/Form'
 
 import axiosInstance from "../axiosApi";
 
@@ -18,7 +19,9 @@ class Usuarios extends Component {
 
     constructor(props){
         super(props)
-        this.state = { modalEliminarCuentaVisible: false,
+        this.state = { filtroNombreCorreo: "",
+            
+                       modalEliminarCuentaVisible: false,
                        idUsuarioAEliminar: null,
 
                        modalErrorEliminarCuentaVisible: false,
@@ -57,12 +60,40 @@ class Usuarios extends Component {
         })
     }
 
+    filtrarNombreCorreo = (usuarios) => {
+        if (this.state.filtroNombreCorreo === ""){
+            return usuarios
+        }
+
+        let u = []
+        for (let i = 0 ; i < usuarios.length ; i++){
+            let nombre = usuarios[i]['first_name'] + ' ' + usuarios[i]['last_name'];
+            nombre = nombre.toLowerCase()
+            if (nombre.toLowerCase().includes(this.state.filtroNombreCorreo.toLowerCase()) ||
+                usuarios[i]['email'].includes(this.state.filtroNombreCorreo.toLowerCase())){
+                    u.push(usuarios[i]);
+            }
+        }
+        return u
+    }
+
+    handleChangeFiltroNombreCorreo = (event) => {
+        this.setState( { filtroNombreCorreo: event.target.value } )
+    }
+
+    restablecerFiltros = () => {
+        this.setState( { filtroNombreCorreo: "" } )
+    }
+
     render() {
         if (this.props.usuarios === null || this.props.usuarioLogueado === null){
             return null;
         }
 
-        let usuarios = this.props.usuarios.map(elemento => (
+        let usuariosFiltrados = this.props.usuarios
+        usuariosFiltrados = this.filtrarNombreCorreo(usuariosFiltrados)
+
+        let usuarios = usuariosFiltrados.map(elemento => (
             <tr>
                 <td>{ elemento.email }</td>
                 <td>{ elemento.first_name }</td>
@@ -98,22 +129,40 @@ class Usuarios extends Component {
             <>
                 <h2 className="mb-5">Usuarios</h2>
 
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>Correo</th>
-                            <th>Nombre</th>
-                            <th>Apellidos</th>
-                            <th>Tipo de usuario</th>
-                            <th>Editar</th>
-                        </tr>
-                    </thead>
+                    
 
-                    <tbody>
-                        { usuarios }
-                    </tbody>
+                        <Row className="mb-4 d-flex">
 
-                </Table>
+                        <Col>
+
+                        <Form.Control className="" placeholder="Introduzca el correo o nombre para buscar"
+                                      value={this.state.filtroNombreCorreo} onChange={this.handleChangeFiltroNombreCorreo} />
+                        </Col>
+
+                        <Col xs="auto">
+                        <Button className="float-right" variant="secondary" onClick={this.restablecerFiltros}>
+                            Restablecer filtros
+                        </Button>
+                        </Col>
+
+                        </Row>
+
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>Correo</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Tipo de usuario</th>
+                                    <th>Editar</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                { usuarios }
+                            </tbody>
+
+                        </Table>
 
                 <Row className="mt-5">
                     <Col>
