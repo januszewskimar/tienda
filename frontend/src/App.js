@@ -164,7 +164,7 @@ class App extends Component {
             else{
                 carrito = <Carrito carrito={this.state.carrito} setCarrito={this.setCarrito} catalogo={this.state.catalogo} />
                 realizarPedido = <RealizarPedido carrito={this.state.carrito} setCarrito={this.setCarrito} usuarioLogueado={this.state.usuarioLogueado}
-                                                 tiendas={this.state.tiendas} />
+                                                 tiendas={this.state.tiendas} actualizarCatalogo={this.actualizarCatalogo} />
                 pedidos = <PedidosCliente usuarioLogueado={this.state.usuarioLogueado} catalogo={this.state.catalogo} tiendas={this.state.tiendas} /> 
                 usuarioCambiarContraseniaAdmin = 
                 usuarioEditarAdmin = usuarioAniadir = usuarios = tiendaEditar = tiendaAniadir = productoEditar = aniadirProducto = inicioSesion

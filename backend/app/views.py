@@ -260,6 +260,11 @@ class Pedidos(APIView):
             serializador_producto = SerializadorProductoPedido(data=e)
             if not serializador_producto.is_valid():
                 return Response(serializador_producto.errors, status=status.HTTP_400_BAD_REQUEST)
+            if p.unidades_disponibles >= int(e['cantidad']):
+                p.unidades_disponibles = p.unidades_disponibles - int(e['cantidad'])
+                p.save()
+            else:
+                return Response(status=status.HTTP_409_CONFLICT)
             serializador_producto.save()
 
         return Response(serializador_pedido.data, status=status.HTTP_201_CREATED)

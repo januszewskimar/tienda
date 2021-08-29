@@ -235,20 +235,25 @@ class ProductoInfo extends Component{
         }
         else{
             if (!(id in this.props.carrito)){
-                areaCompra =    <Form>
-                                    <Form.Row className="mt-4">
-                                        <Form.Label column lg={2}>Cantidad:</Form.Label>
+                if (producto.unidades_disponibles > 0){
+                    areaCompra =    <Form>
+                                        <Form.Row className="mt-4">
+                                            <Form.Label column lg={2}>Cantidad:</Form.Label>
 
-                                        <Col xs={2}>
-                                            <Form.Control name="cantidadCompra" value={this.state.cantidadCompra} type="number"
-                                                        min={1} max={producto.unidades_disponibles} onChange={this.handleChange} />
-                                        </Col>
+                                            <Col xs={2}>
+                                                <Form.Control name="cantidadCompra" value={this.state.cantidadCompra} type="number"
+                                                            min={1} max={producto.unidades_disponibles} onChange={this.handleChange} />
+                                            </Col>
 
-                                        <Col>
-                                            <Button type="submit" onClick={this.aniadirAlCarrito}>Añadir al carrito</Button>
-                                        </Col>
-                                    </Form.Row>
-                                </Form>
+                                            <Col>
+                                                <Button type="submit" onClick={this.aniadirAlCarrito}>Añadir al carrito</Button>
+                                            </Col>
+                                        </Form.Row>
+                                    </Form>
+                }
+                else{
+                    areaCompra = <a style={{ color: "red" }}>Este producto no está disponible.</a>
+                }
             }
             else{
                 areaCompra =    <Row className="mt-4">

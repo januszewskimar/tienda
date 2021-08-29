@@ -126,10 +126,21 @@ class RealizarPedido extends Component {
                 }
                 this.setState( { mostrarMensajeExito: true } )
                 this.props.setCarrito( { } )
+                this.props.actualizarCatalogo()
 
             } catch (error) {
-                this.setState( { mostrarMensajeError: true, mensajeError: "No se ha podido realizar el pedido."})    
-                console.log(error)
+                if (error.response){
+                    if (error.response.status === 409){
+                        this.setState( { mensajeError: "No hay unidades disponibles de un producto para poder realizar este pedido." } )    
+                    }
+                    else{
+                        this.setState( { mmensajeError: "No se ha podido realizar el pedido." } )   
+                    } 
+                }
+                else{
+                    console.log(error)
+                }
+                this.setState( { mostrarMensajeError: true } )
             }
         }
     }

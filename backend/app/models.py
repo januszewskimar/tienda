@@ -21,7 +21,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=8, decimal_places=2)
-    unidades_disponibles = models.IntegerField()
+    unidades_disponibles = models.PositiveIntegerField()
     imagen = models.ImageField(upload_to="productos/")
     fecha_introduccion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
