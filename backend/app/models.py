@@ -68,7 +68,7 @@ class ProductoPedido(models.Model):
 
 class OpinionProducto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True)
     valoracion_numerica = models.DecimalField(max_digits=1, decimal_places=0)
     titulo = models.CharField(max_length=50)
     descripcion = models.TextField()
