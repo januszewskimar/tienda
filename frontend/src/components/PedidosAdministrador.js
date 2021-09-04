@@ -224,30 +224,52 @@ class PedidosAdministrador extends Component {
                         cont = false
                     }
                 }
+
+                if (cont === true){
+                    producto = null;
+                }
     
                 importeTotal += e.precio * e.cantidad
     
-                return  (<ListGroup.Item>
-                            <Row>
-                                <Col xs="2" className="my-auto">
-                                    <Link to={"/catalogo/info/" + producto.id }>
-                                        <Card>
-                                            <Card.Img variant="top" src={"http://localhost:8000" + producto.imagen} />
-                                        </Card>
-                                    </Link>
-                                </Col>
-                                <Col xs="10" className="my-auto">
-    
-                                    <Link to={"/catalogo/info/" + producto.id }>
-                                        <h4>{ producto.nombre }</h4>
-                                    </Link>
-    
-                                    Precio: { e.precio } €<br/>
-                                    Cantidad: { e.cantidad }<br/>
-                                    Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>)
+                if (producto !== null){
+                    return  (<ListGroup.Item>
+                                <Row>
+                                    <Col xs="2" className="my-auto">
+                                        <Link to={"/catalogo/info/" + producto.id }>
+                                            <Card>
+                                                <Card.Img variant="top" src={"http://localhost:8000" + producto.imagen} />
+                                            </Card>
+                                        </Link>
+                                    </Col>
+                                    <Col xs="10" className="my-auto">
+        
+                                        <Link to={"/catalogo/info/" + producto.id }>
+                                            <h4>{ producto.nombre }</h4>
+                                        </Link>
+        
+                                        Precio: { e.precio } €<br/>
+                                        Cantidad: { e.cantidad }<br/>
+                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
+                                    </Col>
+                                </Row>
+                            </ListGroup.Item>)
+                }
+                else{
+                    return  (<ListGroup.Item>
+                                <Row>
+                                    <Col xs="2" className="my-auto">
+
+                                    </Col>
+                                    <Col xs="10" className="my-auto">
+
+                                        <h4>Producto eliminado del catálogo</h4>
+
+                                        Precio: { e.precio } €<br/>
+                                        Cantidad: { e.cantidad }<br/>
+                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
+                                    </Col>
+                                </Row>
+                            </ListGroup.Item>)                }
             })
             let dir
             if ("tienda" in elemento){
@@ -274,8 +296,12 @@ class PedidosAdministrador extends Component {
             for (let i = 0 ; cont && i < this.props.usuarios.length ; i++){
                 if (parseInt(elemento['usuario']) === parseInt(this.props.usuarios[i]['id'])){
                     usuario = this.props.usuarios[i]
-                    cont = true
+                    cont = false
                 }
+            }
+
+            if (cont === true){
+                usuario = null
             }
 
             return(
@@ -313,8 +339,15 @@ class PedidosAdministrador extends Component {
                             }
 
                             <h4 className="mt-5 mb-3">Cliente</h4>
-                            <p>{ usuario.first_name } { usuario.last_name }</p>
-                            <p>{ usuario.email }</p>
+
+                            { usuario !== null ?
+                              <>
+                                <p>{ usuario.first_name } { usuario.last_name }</p>
+                                <p>{ usuario.email }</p>
+                              </>
+                              :
+                              <p>La cuenta con la que se realizó este pedido ya no existe.</p>
+                            }
 
                             { elemento.nota !== null ?
                               ( <>

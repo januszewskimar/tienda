@@ -49,30 +49,54 @@ class PedidosCliente extends Component {
                         cont = false
                     }
                 }
+
+                if (cont === true){
+                    producto = null;
+                }
     
                 importeTotal += e.precio * e.cantidad
     
-                return  (<ListGroup.Item>
-                            <Row>
-                                <Col xs="2" className="my-auto">
-                                    <Link to={"/catalogo/info/" + producto.id }>
-                                        <Card>
-                                            <Card.Img variant="top" src={"http://localhost:8000" + producto.imagen} />
-                                        </Card>
-                                    </Link>
-                                </Col>
-                                <Col xs="10" className="my-auto">
-    
-                                    <Link to={"/catalogo/info/" + producto.id }>
-                                        <h4>{ producto.nombre }</h4>
-                                    </Link>
-    
-                                    Precio: { e.precio } €<br/>
-                                    Cantidad: { e.cantidad }<br/>
-                                    Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>)
+                if (producto !== null){
+                    return  (<ListGroup.Item>
+                                <Row>
+                                    <Col xs="2" className="my-auto">
+                                        <Link to={"/catalogo/info/" + producto.id }>
+                                            <Card>
+                                                <Card.Img variant="top" src={"http://localhost:8000" + producto.imagen} />
+                                            </Card>
+                                        </Link>
+                                    </Col>
+                                    <Col xs="10" className="my-auto">
+        
+                                        <Link to={"/catalogo/info/" + producto.id }>
+                                            <h4>{ producto.nombre }</h4>
+                                        </Link>
+        
+                                        Precio: { e.precio } €<br/>
+                                        Cantidad: { e.cantidad }<br/>
+                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
+                                    </Col>
+                                </Row>
+                            </ListGroup.Item>)
+                }
+                else{
+                    return  (<ListGroup.Item>
+                                <Row>
+                                    <Col xs="2" className="my-auto">
+
+                                    </Col>
+                                    <Col xs="10" className="my-auto">
+
+                                        <h4>Producto eliminado del catálogo</h4>
+
+
+                                        Precio: { e.precio } €<br/>
+                                        Cantidad: { e.cantidad }<br/>
+                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
+                                    </Col>
+                                </Row>
+                            </ListGroup.Item>)
+                }
             })
             let dir
             if ("tienda" in elemento){

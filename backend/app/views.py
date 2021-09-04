@@ -279,12 +279,18 @@ class Pedidos(APIView):
         for e in pedidos_postales:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
             e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
-            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
-
+            try:
+                e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+            except Usuario.DoesNotExist:
+                e['usuario'] = None
+                
         for e in pedidos_tienda:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
             e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
-            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+            try:
+                e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+            except Usuario.DoesNotExist:
+                e['usuario'] = None
 
         serializador_pedidos_postales = SerializadorPedidoEntregaPostal(pedidos_postales, many=True)
         serializador_pedidos_tienda = SerializadorPedidoEntregaTienda(pedidos_tienda, many=True)
