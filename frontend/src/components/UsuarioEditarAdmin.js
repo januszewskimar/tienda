@@ -14,10 +14,10 @@ class UsuarioEditarAdmin extends Component{
         super(props);
 
         this.state = {
+            id: parseInt(this.props.match.params['id']),
             email: "",
             first_name: "",
             last_name: "",
-            datosCargados: false,
 
             mensajeError:"",
             modalErrorVisible: false,
@@ -26,30 +26,27 @@ class UsuarioEditarAdmin extends Component{
     }
 
     componentDidMount(){
-        this.cargarDatos()
+        if (this.props.usuarios !== null){
+            this.cargarDatos()
+        }
     }
 
-    componentDidUpdate(){
-        this.cargarDatos()
+    componentDidUpdate(prevProps){
+        if (prevProps.usuarios === null && this.props.usuarios !== null){
+            this.cargarDatos()
+        }
     }
 
     cargarDatos = () => {
-        if (!this.state.datosCargados){
-            if (this.props.usuarios != null){
-                for (let i = 0 ; i < this.props.usuarios.length ; i++){
-                    if (parseInt(this.props.usuarios[i]['id']) === parseInt(this.props.match.params['id'])){
-                        this.setState( { datosCargados: true,
-                                         email: this.props.usuarios[i]['email'],
-                                         first_name: this.props.usuarios[i]['first_name'],
-                                         last_name: this.props.usuarios[i]['last_name'] } )
-                    }
-                }
-
+        for (let i = 0 ; i < this.props.usuarios.length ; i++){
+            if (parseInt(this.props.usuarios[i]['id']) === this.state.id){
+                this.setState( { email: this.props.usuarios[i]['email'],
+                                 first_name: this.props.usuarios[i]['first_name'],
+                                 last_name: this.props.usuarios[i]['last_name'] } )
             }
         }
     }
     
-
     handleChange = (event) => {
         this.setState({[event.target.name]: event.target.value});
     }
@@ -66,7 +63,7 @@ class UsuarioEditarAdmin extends Component{
         event.preventDefault();
         this.setState( { mostrarMensajeExito: false, mostrarMensajeError: false, mensajeError: "" } )
 
-        axiosInstance.patch('/usuarios/' + this.props.match.params['id'], {
+        axiosInstance.patch('/usuarios/' + this.state.id, {
             email: this.state.email,
             first_name: this.state.first_name,
             last_name: this.state.last_name,

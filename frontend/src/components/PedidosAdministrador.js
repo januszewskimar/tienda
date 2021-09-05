@@ -21,7 +21,7 @@ class PedidosAdministrador extends Component {
     constructor(props){
         super(props)
         this.state = {
-            pedidos: [],
+            pedidos: null,
             pedidosFiltrados: [],
             estados: {},
             mostrarMensajeExitoEstado: false,
@@ -38,20 +38,12 @@ class PedidosAdministrador extends Component {
     }
 
     componentDidMount(){
-        this.actualizarPedidos()
-        let estados = {}
-        for (let i = 0 ; i < this.state.pedidos ; i++){
-            estados[this.state.id] = null;
-        }
-    }
-
-    actualizarPedidos(){
         axiosInstance.get('/pedidos/')
-           .then( result => {
-                this.setState( { pedidos: result.data } )
-            }).catch (error => {
-                console.log(error);
-            })
+        .then( result => {
+             this.setState( { pedidos: result.data } )
+         }).catch (error => {
+             console.log(error);
+         })
     }
 
     handleChangeEstado(event, id) {
@@ -204,6 +196,10 @@ class PedidosAdministrador extends Component {
     }
 
     render() {
+        if (this.state.pedidos === null){
+            return null;
+        }
+
         let pedidosFiltrados = this.state.pedidos
         pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
         pedidosFiltrados = this.filtrarCliente(pedidosFiltrados)

@@ -36,7 +36,7 @@ class Catalogo extends Component {
 
     render() {
 
-        if (this.props.catalogo === null || this.props.usuarioLogueado === null){        
+        if (this.props.catalogo === null){        
             return null;
         }
 

@@ -146,6 +146,10 @@ class RealizarPedido extends Component {
     }
 
     render() {
+        if (this.props.tiendas === null){
+            return null;
+        }
+
         let paises = this.listaPaises()
 
         let formulario

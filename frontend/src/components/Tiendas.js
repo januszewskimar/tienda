@@ -44,6 +44,10 @@ class Tiendas extends Component {
     }
 
     render() {
+        if (this.props.tiendas === null){
+            return null;
+        }
+        
         let tiendas = this.props.tiendas.map(elemento => (
             <Card>
                 <Card.Header>

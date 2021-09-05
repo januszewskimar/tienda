@@ -68,6 +68,10 @@ class Carrito extends Component {
     }
 
     render() {
+        if (this.props.catalogo === null){
+            return null;
+        }
+        
         let importeTotal = 0
         let productos = Object.entries(this.props.carrito).map(([key, value]) => {
             let elemento

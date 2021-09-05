@@ -203,6 +203,9 @@ class ProductoInfo extends Component{
     }
 
     render() {
+        if (this.props.catalogo === null){
+            return null;
+        }
 
         let id = this.state.id
         let producto

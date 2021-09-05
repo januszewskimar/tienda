@@ -12,25 +12,19 @@ class TiendaEditar extends Component {
 
     constructor(props){
         super(props)
-        let id = parseInt(this.props.match.params['id'])
-        let tienda
-        for (let i = 0 ; i < this.props.tiendas.length ; i++){
-            if (this.props.tiendas[i]['id'] === id){
-                tienda = this.props.tiendas[i]
-            }
-        }
+
         this.state = {
-            id: id,
-            nombre: tienda.nombre,
-            descripcion: tienda.descripcion,
+            id: parseInt(this.props.match.params['id']),
+            nombre: "",
+            descripcion: "",
             imagen: null,
 
-            idDireccion: tienda.direccion.id,
-            direccion: tienda.direccion.direccion,
-            localidad: tienda.direccion.localidad,
-            provincia: tienda.direccion.provincia,
-            codigo_postal: tienda.direccion.codigo_postal,
-            pais: tienda.direccion.pais,
+            idDireccion: "",
+            direccion: "",
+            localidad: "",
+            provincia: "",
+            codigo_postal: "",
+            pais: "",
 
             mostrarMensajeError: false,
             mensajeError: ""
@@ -40,6 +34,39 @@ class TiendaEditar extends Component {
         this.handleChangeImagen = this.handleChangeImagen.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.cerrarMensajeError = this.cerrarMensajeError.bind(this);
+    }
+
+    componentDidMount(){
+        if (this.props.tiendas !== null){
+            this.cargarDatos()
+        }
+    }
+
+    componentDidUpdate(prevProps){
+        if (prevProps.tiendas === null && this.props.tiendas !== null){
+            this.cargarDatos()
+        }
+    }
+
+    cargarDatos = () => {
+        let tienda
+
+        for (let i = 0 ; i < this.props.tiendas.length ; i++){
+            if (this.props.tiendas[i]['id'] === this.state.id){
+                tienda = this.props.tiendas[i];
+            }
+        }
+
+        this.setState({ nombre: tienda.nombre,
+                        descripcion: tienda.descripcion,
+
+                        idDireccion: tienda.direccion.id,
+                        direccion: tienda.direccion.direccion,
+                        localidad: tienda.direccion.localidad,
+                        provincia: tienda.direccion.provincia,
+                        codigo_postal: tienda.direccion.codigo_postal,
+                        pais: tienda.direccion.pais,
+                    })
     }
 
     handleChange(event) {

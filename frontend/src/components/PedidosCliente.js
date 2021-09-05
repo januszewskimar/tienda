@@ -19,7 +19,7 @@ class PedidosCliente extends Component {
     constructor(props){
         super(props)
         this.state = {
-            pedidos: [],
+            pedidos: null,
         }
     }
 
@@ -34,6 +34,10 @@ class PedidosCliente extends Component {
     }
 
     render() {
+        if (this.state.pedidos === null){
+            return null;
+        }
+
         let pedidos = this.state.pedidos.map(elemento => {
             let fecha = new Date(elemento.fecha)
             fecha = fecha.toLocaleString()

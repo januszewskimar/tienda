@@ -107,7 +107,7 @@ class Usuarios extends Component {
     }
 
     render() {
-        if (this.props.usuarios === null || this.props.usuarioLogueado === null){
+        if (this.props.usuarios === null){
             return null;
         }
 

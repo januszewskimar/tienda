@@ -12,27 +12,50 @@ class ProductoEditar extends Component {
 
     constructor(props){
         super(props)
-        let id = parseInt(this.props.match.params['id'])
-        let producto
-        for (let i = 0 ; i < this.props.catalogo.length ; i++){
-            if (this.props.catalogo[i]['id'] === id){
-                producto = this.props.catalogo[i]
-            }
-        }
+
         this.state = {
-            id: id,
-            nombre: producto.nombre,
-            descripcion: producto.descripcion,
-            precio: producto.precio,
-            unidades_disponibles: producto.unidades_disponibles,
+            id: parseInt(this.props.match.params['id']),
+            nombre: "",
+            descripcion: "",
+            precio: "0",
+            unidades_disponibles: "0",
             imagen: null,
 
             mostrarMensajeError: "",
             mensajeError: ""
         }
+
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeImagen = this.handleChangeImagen.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount(){
+        if (this.props.catalogo !== null){
+            this.cargarDatos()
+        }
+    }
+
+    componentDidUpdate(prevProps){
+        if (prevProps.catalogo === null && this.props.catalogo !== null){
+            this.cargarDatos()
+        }
+    }
+
+    cargarDatos = () => {
+        let producto
+
+        for (let i = 0 ; i < this.props.catalogo.length ; i++){
+            if (this.props.catalogo[i]['id'] === this.state.id){
+                producto = this.props.catalogo[i]
+            }
+        }
+
+        this.setState( { nombre: producto.nombre,
+                         descripcion: producto.descripcion,
+                         precio: producto.precio,
+                         unidades_disponibles: producto.unidades_disponibles,
+                        } )
     }
 
     handleChange(event) {
