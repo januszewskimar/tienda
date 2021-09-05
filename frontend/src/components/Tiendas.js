@@ -109,9 +109,11 @@ class Tiendas extends Component {
 
         if (this.props.usuarioLogueado['is_staff']){
             botonAniadir =  <Row className="mt-5">
-                                <Link to="/tiendas/aniadir">
-                                    <Button variant="primary">Añadir tienda</Button>
-                                </Link>
+                                <Col>
+                                    <Link to="/tiendas/aniadir">
+                                        <Button variant="primary">Añadir tienda</Button>
+                                    </Link>
+                                </Col>
                             </Row>
         }
 
@@ -119,9 +121,13 @@ class Tiendas extends Component {
             <>
                 <h2 className="mb-5">Tiendas</h2>
 
-                <Accordion defaultActiveKey="0">
-                    { tiendas }
-                </Accordion>
+                { tiendas.length > 0 ?
+                    <Accordion defaultActiveKey="0">
+                        { tiendas }
+                    </Accordion>
+                 :
+                    <h4>No se han encontrado resultados</h4>
+                }
 
                 { botonAniadir }
 

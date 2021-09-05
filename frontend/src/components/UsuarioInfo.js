@@ -111,19 +111,25 @@ class UsuarioInfo extends Component {
                 </Form>
 
                 <Row className="mt-5">
-                    <Link to="/usuario/editar">
-                        <Button variant="primary">Modificar datos</Button>
-                    </Link>
+                    <Col>
+                        <Link to="/usuario/editar">
+                            <Button variant="primary">Modificar datos</Button>
+                        </Link>
+                    </Col>
                 </Row>
 
                 <Row className="mt-3">
-                    <Link to="/usuario/cambiar-contrasenia">
-                        <Button variant="secondary" className="">Cambiar contraseña</Button>
-                    </Link>
+                    <Col>
+                        <Link to="/usuario/cambiar-contrasenia">
+                            <Button variant="secondary" className="">Cambiar contraseña</Button>
+                        </Link>
+                    </Col>
                 </Row>
 
                 <Row className="mt-3">
-                    <Button variant="danger" className="warning" onClick={this.mostrarModalEliminar}>Eliminar cuenta</Button>
+                    <Col>
+                        <Button variant="danger" className="warning" onClick={this.mostrarModalEliminar}>Eliminar cuenta</Button>
+                    </Col>
                 </Row>
             </>
         );

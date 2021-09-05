@@ -83,9 +83,11 @@ class Catalogo extends Component {
 
         if (this.props.usuarioLogueado['is_staff']){
             botonAniadir =  <Row className="mt-5">
-                                <Link to="/catalogo/aniadir">
-                                    <Button variant="primary">Añadir producto</Button>
-                                </Link>
+                                <Col>
+                                    <Link to="/catalogo/aniadir">
+                                        <Button variant="primary">Añadir producto</Button>
+                                    </Link>
+                                </Col>
                             </Row>
         }
 
