@@ -268,24 +268,42 @@ class PedidosAdministrador extends Component {
                             </ListGroup.Item>)                }
             })
             let dir
+            let es_tienda = false
             if ("tienda" in elemento){
                 let cont = true
                 for (let i = 0 ; cont && i < this.props.tiendas.length ; i++){
                     if (parseInt(elemento['tienda']) === parseInt(this.props.tiendas[i]['id'])){
                         dir = this.props.tiendas[i]['direccion']
-                        cont = true
+                        cont = false
                     }
+                }
+                if (cont === true){
+                    es_tienda = true;
+                    dir = null;
                 }
             }
             else{
                 dir = elemento['direccion']
             }
-            let direccion = <>    
+            
+            let direccion;
+
+            if (dir !== null){
+                direccion = <>    
                                 <p>{ dir.destinatario }</p>
                                 <p>{ dir.direccion }</p>
                                 <p>{ dir.localidad } { (dir.provincia !== null ? ("(" + dir.provincia + ")") : " " ) } { dir.codigo_postal }</p>
                                 <p>{ dir.pais }</p>
                             </>
+            }
+            else{
+                if (es_tienda){
+                    direccion = <p>La tienda que se seleccionó para la entrega ya no existe.</p>
+                }
+                else{
+                    direccion = <p>La dirección que se introdujo para la entrega no está disponible.</p>
+                }
+            }
 
             let usuario
             let cont = true

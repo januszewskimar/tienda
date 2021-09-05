@@ -278,7 +278,10 @@ class Pedidos(APIView):
 
         for e in pedidos_postales:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
-            e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            try:
+                e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            except Direccion.DoesNotExist:
+                e['direccion'] = None
             try:
                 e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
             except Usuario.DoesNotExist:
@@ -286,7 +289,10 @@ class Pedidos(APIView):
                 
         for e in pedidos_tienda:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
-            e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            try:
+                e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            except Tienda.DoesNotExist:
+                e['tienda'] = None
             try:
                 e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
             except Usuario.DoesNotExist:
@@ -314,12 +320,18 @@ class PedidosUsuarios(APIView):
 
         for e in pedidos_postales:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
-            e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            try:
+                e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
+            except Direccion.DoesNotExist:
+                e['direccion'] = None
             e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
 
         for e in pedidos_tienda:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
-            e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            try:
+                e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
+            except Tienda.DoesNotExist:
+                e['tienda'] = None
             e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
 
         serializador_pedidos_postales = SerializadorPedidoEntregaPostal(pedidos_postales, many=True)
