@@ -1,0 +1,35 @@
+version: "3.9"
+   
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 8000:8000
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./frontend/build:/var/www/static
+      - ./media:/var/www/media
+    depends_on:
+      - backend
+
+
+  postgres:
+    image: postgres
+    volumes:
+      - ./datos_bd:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=tienda
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+
+
+  backend:
+    build: ./backend
+    command: gunicorn tienda.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/code
+      - ./media:/media
+    depends_on:
+      - postgres
+
