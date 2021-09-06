@@ -262,10 +262,11 @@ class PedidosAdministrador extends Component {
 
                                         Precio: { e.precio } €<br/>
                                         Cantidad: { e.cantidad }<br/>
-                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) }
+                                        Total: { parseFloat(e.precio * e.cantidad).toFixed(2) } €
                                     </Col>
                                 </Row>
-                            </ListGroup.Item>)                }
+                            </ListGroup.Item>)
+                }
             })
             let dir
             let es_tienda = false

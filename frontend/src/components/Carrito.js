@@ -102,7 +102,7 @@ class Carrito extends Component {
 
                                 Precio: { elemento.precio } €<br/>
                                 Cantidad: { value }<br/>
-                                Total: { parseFloat(elemento.precio * value).toFixed(2) }
+                                Total: { parseFloat(elemento.precio * value).toFixed(2) } €
                             </Col>
                             <Col xs="4" className="my-auto">
                                 <Button className="float-right ml-2" variant="danger" onClick={() => this.eliminarProducto(elemento.id)}>Eliminar</Button>
