@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import axiosInstance from "../axiosApi";
+import axiosInstance from "../../axiosApi";
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
@@ -36,6 +36,7 @@ class InicioSesion extends Component{
                 axiosInstance.defaults.headers['Authorization'] = "JWT " + result.data.access;
                 localStorage.setItem('access_token', result.data.access);
                 localStorage.setItem('refresh_token', result.data.refresh);
+                this.props.actualizarTodo()
                 this.props.vaciarCarrito()
                 this.props.history.push('/')
             }
