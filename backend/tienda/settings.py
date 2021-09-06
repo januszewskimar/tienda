@@ -75,7 +75,7 @@ SIMPLE_JWT = {
 }
 
 AUTHENTICATION_BACKENDS = (
-	"app.managers.GestorUsuarios",
+	"app.models.GestorUsuarios",
 )
 
 SITE_ID = 1
