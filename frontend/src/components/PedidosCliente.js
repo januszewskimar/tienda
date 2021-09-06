@@ -191,9 +191,13 @@ class PedidosCliente extends Component {
             <>
                 <h2 className="mb-5">Pedidos</h2>
 
-                <Accordion defaultActiveKey="0">
-                    { pedidos }
-                </Accordion>
+                { this.state.pedidos.length > 0 ?
+                    <Accordion defaultActiveKey="0">
+                        { pedidos }
+                    </Accordion>
+                    :
+                    <h4>No se ha realizado ningún pedido</h4>
+                }
             </>
         );
     }

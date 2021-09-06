@@ -443,9 +443,15 @@ class PedidosAdministrador extends Component {
                     </Col>
 
                     <Col>
-                        <Accordion defaultActiveKey="0">
-                            { pedidos }
-                        </Accordion>
+
+                        { pedidosFiltrados.length > 0 ?
+                            <Accordion defaultActiveKey="0">
+                                { pedidos }
+                            </Accordion>
+                         :
+                            <h4>No se han encontrado resultados</h4>
+                        }
+
                     </Col>
                 </Row>
                 

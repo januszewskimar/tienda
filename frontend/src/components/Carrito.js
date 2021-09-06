@@ -117,17 +117,21 @@ class Carrito extends Component {
             <>
                 <h2 className="mb-5">Carrito</h2>
 
-                <ListGroup>
-                    { productos }
-                </ListGroup>
-
-                <h5 className="mt-5">Importe total: <b>{ parseFloat(importeTotal).toFixed(2) } €</b></h5>
 
                 { Object.keys(this.props.carrito).length !== 0 ?
-                <LinkContainer to="/carrito/realizar-pedido">
-                    <Button className="mt-3" variant="primary">Realizar pedido</Button>
-                </LinkContainer>
-                : null}
+                 <>
+                    <ListGroup>
+                        { productos }
+                    </ListGroup>
+
+                    <h5 className="mt-5">Importe total: <b>{ parseFloat(importeTotal).toFixed(2) } €</b></h5>
+
+
+                    <LinkContainer to="/carrito/realizar-pedido">
+                        <Button className="mt-3" variant="primary">Realizar pedido</Button>
+                    </LinkContainer>
+                 </>
+                : <h4>El carrito está vacío</h4> }
 
                 <Modal show={this.state.modalModificarCantidadVisible} onHide={this.ocultarModalModificarCantidad}>
                     <Modal.Header closeButton>
