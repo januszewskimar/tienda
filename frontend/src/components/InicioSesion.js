@@ -13,7 +13,8 @@ class InicioSesion extends Component{
         this.state = {
             email:"",
             password: "",
-            error: false,
+
+            mostrarMensajeError: false,
             mensajeError: ""
         };
         this.handleChange = this.handleChange.bind(this);
@@ -35,17 +36,16 @@ class InicioSesion extends Component{
                 axiosInstance.defaults.headers['Authorization'] = "JWT " + result.data.access;
                 localStorage.setItem('access_token', result.data.access);
                 localStorage.setItem('refresh_token', result.data.refresh);
-                this.props.actualizarTodo()
                 this.props.vaciarCarrito()
                 this.props.history.push('/')
             }
         ).catch (error => {
-            this.setState( {error: true} )
+            this.setState( { mostrarMensajeError: true } )
             if (error.response.status === 401){
-                this.setState( {mensajeError: "El correo o la contraseña son incorrectos"} )
+                this.setState( { mensajeError: "El correo o la contraseña son incorrectos" } )
             }
             else{
-                this.setState( {mensajeError: ""} )
+                this.setState( { mensajeError: "" } )
             }
     
         })
@@ -54,22 +54,19 @@ class InicioSesion extends Component{
     
 
     render() {
-        let alertaError;
-        
-        if (this.state.error){
-            alertaError = <Alert variant="danger">
-                        <Alert.Heading>No se ha podido iniciar sesión.</Alert.Heading>
-                            <p>
-                                { this.state.mensajeError }
-                            </p>
-                    </Alert>
-        }
-
-                     
 
         return (
             <>
-            {alertaError}
+            { this.state.mostrarMensajeError ?
+                <Alert variant="danger">
+                    <Alert.Heading>No se ha podido iniciar sesión.</Alert.Heading>
+                    <p>
+                        { this.state.mensajeError }
+                    </p>
+                </Alert>
+             : null
+            }
+
             <Form onSubmit={this.handleSubmit}>
                 <h2 className="mb-4">Iniciar sesión</h2>
                     <Form.Group controlId="formEmail">

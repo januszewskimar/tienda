@@ -57,20 +57,20 @@ class AniadirProducto extends Component {
     }
 
     render() {
-        let alertError
-        if (this.state.mostrarMensajeError){
-            alertError =    <Alert variant="danger">
-                                <Alert.Heading>Error al añadir el producto</Alert.Heading>
-                                <p>
-                                    { this.state.mensajeError }
-                                </p>
-                            </Alert>
-        }
-
 
         return (
             <>
-                { alertError }
+                { this.state.mostrarMensajeError ?
+                    <Alert variant="danger">
+                        <Alert.Heading>Error al añadir el producto</Alert.Heading>
+                        <p>
+                            { this.state.mensajeError }
+                        </p>
+                    </Alert>
+                 : null
+                }
+
+
                 <Form onSubmit={this.handleSubmit}>
                     <h2 className="mb-4">Añadir un nuevo producto</h2>
 

@@ -14,7 +14,7 @@ class UsuarioEditar extends Component {
             correo: this.props.usuarioLogueado['email'],
             nombre: this.props.usuarioLogueado['first_name'],
             apellidos: this.props.usuarioLogueado['last_name'],
-            error: false,
+            mostrarMensajeError: false,
             mensajeError: ""
         };
         this.handleChange = this.handleChange.bind(this);
@@ -25,7 +25,7 @@ class UsuarioEditar extends Component {
 
     handleSubmit(event){
         event.preventDefault()
-        this.setState({ error: false, mensajeError: "" })
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
         axiosInstance.patch('/usuarios/' + this.state.id, {
             email: this.state.correo,
             first_name: this.state.nombre,
@@ -37,11 +37,12 @@ class UsuarioEditar extends Component {
             }
         ).catch (error => {
             if (error.response.status === 409){
-                this.setState({ error: true, mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" })
+                this.setState( { mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" } )
             }
             else{
-                this.setState({ error: true, mensajeError: "" })
+                this.setState( { mensajeError: "" } )
             }
+            this.setState( { mostrarMensajeError: true } )
         })
     }
 
@@ -50,19 +51,18 @@ class UsuarioEditar extends Component {
     }
 
     render() {
-        let mensaje
-        if (this.state.error){
-            mensaje =   <Alert variant="danger" className={ this.state.mostrar_mensaje_error }>
-                            <Alert.Heading>Error al modificar los datos.</Alert.Heading>
-                            <p>
-                                { this.state.mensajeError }
-                            </p>
-                        </Alert>
-        }
 
         return (
             <>
-                { mensaje }
+                { this.state.mostrarMensajeError ?
+                    <Alert variant="danger">
+                        <Alert.Heading>Error al modificar los datos.</Alert.Heading>
+                        <p>
+                            { this.state.mensajeError }
+                        </p>
+                    </Alert>
+                 : null
+                }
 
                 <h2 className="mb-4">Modificar los datos personales de la cuenta</h2>
 

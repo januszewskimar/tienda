@@ -129,7 +129,18 @@ class Tiendas extends Component {
                     <h4>No se han encontrado resultados</h4>
                 }
 
-                { botonAniadir }
+
+                { this.props.usuarioLogueado['is_staff'] ?
+                    <Row className="mt-5">
+                        <Col>
+                            <Link to="/tiendas/aniadir">
+                                <Button variant="primary">Añadir tienda</Button>
+                            </Link>
+                        </Col>
+                    </Row>
+                 : null
+                }
+
 
                 <Modal show={this.state.modalEliminarVisible} onHide={this.ocultarModalEliminar}>
                     <Modal.Header closeButton>

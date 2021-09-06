@@ -37,6 +37,7 @@ class Cabecera extends Component {
         }
         else{
             let nombreCompleto = this.props.usuarioLogueado['first_name'] + ' ' + this.props.usuarioLogueado['last_name']
+            
             parteDerecha = <>
                                 { !(this.props.usuarioLogueado['is_staff']) ?
                                     <LinkContainer to="/carrito">
@@ -70,10 +71,10 @@ class Cabecera extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
-                            {parteIzquierda}
+                            { parteIzquierda }
                         </Nav>
                         <Nav>
-                            {parteDerecha}
+                            { parteDerecha }
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

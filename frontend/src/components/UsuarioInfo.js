@@ -41,15 +41,6 @@ class UsuarioInfo extends Component {
     }
 
     render() {
-        let tipo
-        if (this.props.usuarioLogueado['is_staff']){
-            tipo = "Administrador"
-        }
-        else{
-            tipo = "Cliente"
-        }
-
-
 
         return (
             <>
@@ -75,7 +66,7 @@ class UsuarioInfo extends Component {
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formCorreo">
                         <Form.Label column sm="2">
-                        Correo electrónico
+                            Correo electrónico
                         </Form.Label>
                         <Col sm="10">
                             <Form.Control plaintext readOnly value={this.props.usuarioLogueado['email']} />
@@ -84,7 +75,7 @@ class UsuarioInfo extends Component {
 
                     <Form.Group as={Row} className="mb-3" controlId="formNombre">
                         <Form.Label column sm="2">
-                        Nombre
+                            Nombre
                         </Form.Label>
                         <Col sm="10">
                             <Form.Control plaintext readOnly value={this.props.usuarioLogueado['first_name']} />
@@ -93,7 +84,7 @@ class UsuarioInfo extends Component {
 
                     <Form.Group as={Row} className="mb-3" controlId="formApellidos">
                         <Form.Label column sm="2">
-                        Apellidos
+                            Apellidos
                         </Form.Label>
                         <Col sm="10">
                             <Form.Control plaintext readOnly value={this.props.usuarioLogueado['last_name']} />
@@ -102,10 +93,13 @@ class UsuarioInfo extends Component {
 
                     <Form.Group as={Row} className="mb-3" controlId="formTipo">
                         <Form.Label column sm="2">
-                        Tipo de usuario
+                            Tipo de usuario
                         </Form.Label>
                         <Col sm="10">
-                            <Form.Control plaintext readOnly value={tipo} />
+                            <Form.Control plaintext readOnly value={ this.props.usuarioLogueado['is_staff'] ?
+                                                                        "Administrador"
+                                                                     :  "Cliente"
+                                                                    } />
                         </Col>
                     </Form.Group>
                 </Form>

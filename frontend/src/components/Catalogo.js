@@ -79,18 +79,6 @@ class Catalogo extends Component {
             productos = <h4>No se han encontrado resultados</h4>
         }
 
-        let botonAniadir
-
-        if (this.props.usuarioLogueado['is_staff']){
-            botonAniadir =  <Row className="mt-5">
-                                <Col>
-                                    <Link to="/catalogo/aniadir">
-                                        <Button variant="primary">Añadir producto</Button>
-                                    </Link>
-                                </Col>
-                            </Row>
-        }
-
         return (
             <>
                 <h2 className="mb-5">Catálogo</h2>
@@ -100,7 +88,16 @@ class Catalogo extends Component {
 
                 { productos }
 
-                { botonAniadir }
+                { this.props.usuarioLogueado['is_staff'] ?
+                    <Row className="mt-5">
+                        <Col>
+                            <Link to="/catalogo/aniadir">
+                                <Button variant="primary">Añadir producto</Button>
+                            </Link>
+                        </Col>
+                    </Row>
+                 : null
+                }
             </>
         );
     }

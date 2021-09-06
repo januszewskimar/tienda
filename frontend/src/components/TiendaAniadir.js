@@ -95,20 +95,6 @@ class TiendaAniadir extends Component {
     }
 
     render() {
-        let alertError
-        if (this.state.mostrarMensajeError){
-            alertError =    <Modal show={this.state.mostrarMensajeError} onHide={this.cerrarMensajeError}>
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Error al añadir la tienda</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>{ this.state.mensajeError }</Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="secondary" onClick={this.cerrarMensajeError}>
-                                        Cerrar
-                                    </Button>
-                                </Modal.Footer>
-                            </Modal>
-        }
 
         let paises = this.listaPaises()
 
@@ -177,7 +163,22 @@ class TiendaAniadir extends Component {
                         Añadir
                     </Button>           
 
-                    { alertError }
+
+
+                    { this.state.mostrarMensajeError ?
+                        <Modal show={this.state.mostrarMensajeError} onHide={this.cerrarMensajeError}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Error al añadir la tienda</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>{ this.state.mensajeError }</Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={this.cerrarMensajeError}>
+                                    Cerrar
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
+                     : null
+                    }
 
                 </Form>
             </>
