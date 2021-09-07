@@ -61,8 +61,8 @@ class UsuariosId(APIView):
                     return Response(status=status.HTTP_409_CONFLICT)
         
         if "is_staff" in request.data:
-            if request.data['is_staff'] != usuario.is_staff:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            if request.data['is_staff'] != request.user.is_staff:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializador = SerializadorUsuario(usuario, data=request.data, partial=True)
 
