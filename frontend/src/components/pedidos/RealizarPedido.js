@@ -165,8 +165,8 @@ class RealizarPedido extends Component {
                                     <option disabled hidden selected value>Elegir una tienda de la lista</option>
                                     { this.props.tiendas.map((elemento) => 
                                         <option value={ elemento.id }>
-                                            { elemento.nombre } -
-                                            { elemento.direccion.localidad } -
+                                            { elemento.nombre + " - "}
+                                            { elemento.direccion.localidad + " - "}
                                             { (elemento.direccion.provincia !== null ?
                                                 (elemento.direccion.provincia + " - ")
                                                 : null )
