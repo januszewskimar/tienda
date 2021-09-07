@@ -1,15 +1,14 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
@@ -17,40 +16,43 @@ import axiosInstance from "../axiosApi";
 class PedidosCliente extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
+
         this.state = {
             pedidos: null,
-        }
+        };
     }
 
     componentDidMount(){
         axiosInstance.get('/usuarios/' + this.props.usuarioLogueado.id + '/pedidos')
            .then( result => {
-                this.setState( { pedidos: result.data } )
+                this.setState( { pedidos: result.data } );
             }).catch (error => {
                 console.log(error);
             })
 
     }
 
+
+    
     render() {
         if (this.state.pedidos === null){
             return null;
         }
 
         let pedidos = this.state.pedidos.map(elemento => {
-            let fecha = new Date(elemento.fecha)
-            fecha = fecha.toLocaleString()
+            let fecha = new Date(elemento.fecha);
+            fecha = fecha.toLocaleString();
 
 
-            let importeTotal = 0
+            let importeTotal = 0;
             let productos = elemento.productos.map((e) => {
-                let producto
-                let cont = true
+                let producto;
+                let cont = true;
                 for (let i = 0 ; cont && i < this.props.catalogo.length ; i++){
                     if (parseInt(this.props.catalogo[i].id) === parseInt(e.producto)){
-                        producto = this.props.catalogo[i]
-                        cont = false
+                        producto = this.props.catalogo[i];
+                        cont = false;
                     }
                 }
 
@@ -58,7 +60,7 @@ class PedidosCliente extends Component {
                     producto = null;
                 }
     
-                importeTotal += e.precio * e.cantidad
+                importeTotal += e.precio * e.cantidad;
     
                 if (producto !== null){
                     return  (<ListGroup.Item>
@@ -102,10 +104,10 @@ class PedidosCliente extends Component {
                             </ListGroup.Item>)
                 }
             })
-            let dir
-            let es_tienda = false
+            let dir;
+            let es_tienda = false;
             if ("tienda" in elemento){
-                let cont = true
+                let cont = true;
                 for (let i = 0 ; cont && i < this.props.tiendas.length ; i++){
                     if (parseInt(elemento['tienda']) === parseInt(this.props.tiendas[i]['id'])){
                         dir = this.props.tiendas[i]['direccion'];
@@ -118,7 +120,7 @@ class PedidosCliente extends Component {
                 }
             }
             else{
-                dir = elemento['direccion']
+                dir = elemento['direccion'];
             }
             let direccion;
 
@@ -184,7 +186,7 @@ class PedidosCliente extends Component {
                         </Card.Body>
                     </Accordion.Collapse>
                 </Card>
-        )})
+        )});
         
 
         return (

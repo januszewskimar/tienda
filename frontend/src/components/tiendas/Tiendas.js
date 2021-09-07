@@ -1,15 +1,14 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
-import Modal from 'react-bootstrap/Modal'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import Modal from 'react-bootstrap/Modal';
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
@@ -25,24 +24,26 @@ class Tiendas extends Component {
     }
 
     ocultarModalEliminar = () => {
-        this.setState({modalEliminarVisible: false, tiendaAEliminar: null})
+        this.setState( { modalEliminarVisible: false, tiendaAEliminar: null } );
     }
 
     mostrarModalEliminar = (id) => {
-        this.setState({modalEliminarVisible: true, tiendaAEliminar: id})
+        this.setState( { modalEliminarVisible: true, tiendaAEliminar: id } );
     }
 
     eliminarTienda = () => {
         axiosInstance.delete('/tiendas/' + this.state.tiendaAEliminar).then(
-            (result) => {
-                this.props.actualizarTiendas()
-                this.ocultarModalEliminar()
+            () => {
+                this.props.actualizarTiendas();
+                this.ocultarModalEliminar();
             }
         ).catch (error => {
-            console.log(error)
+            console.log(error);
         })
     }
 
+
+    
     render() {
         if (this.props.tiendas === null){
             return null;
@@ -103,19 +104,7 @@ class Tiendas extends Component {
                 </Accordion.Collapse>
             </Card>
         ))
-        
 
-        let botonAniadir
-
-        if (this.props.usuarioLogueado['is_staff']){
-            botonAniadir =  <Row className="mt-5">
-                                <Col>
-                                    <Link to="/tiendas/aniadir">
-                                        <Button variant="primary">Añadir tienda</Button>
-                                    </Link>
-                                </Col>
-                            </Row>
-        }
 
         return (
             <>

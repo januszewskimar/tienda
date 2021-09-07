@@ -1,44 +1,41 @@
-import React, { Component } from "react";
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import Alert from 'react-bootstrap/Alert'
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import axiosInstance from "../axiosApi";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert';
+
+import axiosInstance from '../../axiosApi';
 
 
 
 class ProductoEditar extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
 
         this.state = {
-            id: parseInt(this.props.match.params['id']),
-            nombre: "",
-            descripcion: "",
-            precio: "0",
-            unidades_disponibles: "0",
-            imagen: null,
+                       id: parseInt(this.props.match.params['id']),
+                       nombre: "",
+                       descripcion: "",
+                       precio: "0",
+                       unidades_disponibles: "0",
+                       imagen: null,
 
-            mostrarMensajeError: "",
-            mensajeError: ""
-        }
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleChangeImagen = this.handleChangeImagen.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+                       mostrarMensajeError: "",
+                       mensajeError: ""
+                     };
     }
 
     componentDidMount(){
         if (this.props.catalogo !== null){
-            this.cargarDatos()
+            this.cargarDatos();
         }
     }
 
     componentDidUpdate(prevProps){
         if (prevProps.catalogo === null && this.props.catalogo !== null){
-            this.cargarDatos()
+            this.cargarDatos();
         }
     }
 
@@ -47,33 +44,32 @@ class ProductoEditar extends Component {
 
         for (let i = 0 ; i < this.props.catalogo.length ; i++){
             if (this.props.catalogo[i]['id'] === this.state.id){
-                producto = this.props.catalogo[i]
+                producto = this.props.catalogo[i];
             }
         }
 
         this.setState( { nombre: producto.nombre,
                          descripcion: producto.descripcion,
                          precio: producto.precio,
-                         unidades_disponibles: producto.unidades_disponibles,
-                        } )
+                         unidades_disponibles: producto.unidades_disponibles } );
     }
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
+    handleChange = (event) => {
+        this.setState( { [event.target.name]: event.target.value } );
     }
 
-    handleChangeImagen(event) {
+    handleChangeImagen = (event) => {
         if (event.value !== ""){
             this.setState( { imagen: event.target.files[0] } );
         }
         else{
-            this.setState( {imagen: null} )
+            this.setState( { imagen: null } );
         }
     }
 
-    async handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
-        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } );
         
         try {
             let datos = new FormData();
@@ -86,14 +82,16 @@ class ProductoEditar extends Component {
             }
 
             await axiosInstance.patch('/productos/' + this.state.id, datos);
-            this.props.actualizarCatalogo()
-            this.props.history.push('/catalogo/')
+            this.props.actualizarCatalogo();
+            this.props.history.push('/catalogo/');
         } catch (error) {
-            this.setState( { mostrarMensajeError: true, mensajeError: ""})    
+            this.setState( { mostrarMensajeError: true, mensajeError: "" } );
             
         }
     }
 
+
+    
     render() {
 
         return (
@@ -132,8 +130,9 @@ class ProductoEditar extends Component {
 
                     <Form.Group controlId="formUnidadesDisponibles">
                         <Form.Label>Unidades disponibles</Form.Label>
-                        <Form.Control placeholder="Introduzca el número de unidades disponibles" value={this.state.unidades_disponibles} 
-                                      name="unidades_disponibles" onChange={this.handleChange} pattern="^[1-9]\d*$" required />
+                        <Form.Control placeholder="Introduzca el número de unidades disponibles"
+                                      value={this.state.unidades_disponibles} name="unidades_disponibles"
+                                      onChange={this.handleChange} pattern="^[1-9]\d*$" required />
                     </Form.Group>
 
                     <Form.Group controlId="formImagen">
@@ -146,7 +145,7 @@ class ProductoEditar extends Component {
 
                     <Button className="mt-4" variant="primary" type="submit">
                         Guardar
-                    </Button>               
+                    </Button>
                 </Form>
             </>
 

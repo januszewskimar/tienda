@@ -1,10 +1,12 @@
-import React, { Component } from "react";
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
+import { React, Component } from 'react';
+
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+
+import axiosInstance from '../../axiosApi';
 
 
-import axiosInstance from "../axiosApi";
 
 class Registro extends Component{
     constructor(props){
@@ -19,21 +21,21 @@ class Registro extends Component{
             mostrarMensajeError: false,
             mostrarMensajeExito: false
         };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
+    handleChange = (event) => {
+        this.setState( { [event.target.name]: event.target.value } );
     }
 
-    async handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
-        this.setState( { mostrarMensajeExito: false, mostrarMensajeError: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeExito: false,
+                         mostrarMensajeError: false,
+                         mensajeError: "" } );
 
         if (this.state.password1 !== this.state.password2){
-            this.setState({mostrarMensajeError: true, mensajeError: "Las contraseñas no coinciden."})
+            this.setState( { mostrarMensajeError: true,
+                             mensajeError: "Las contraseñas no coinciden." } );
         }
         else{
             try {
@@ -43,17 +45,17 @@ class Registro extends Component{
                     first_name: this.state.first_name,
                     last_name: this.state.last_name
                 });
-                this.setState({mostrarMensajeExito: true})
+                this.setState({mostrarMensajeExito: true});
                 return response;
             } catch (error) {
                 if (error.response.status === 409){
-                    this.setState({mensajeError: "Ya existe un usuario con el correo que ha proporcionado en el formulario"})
+                    this.setState( { mensajeError: "Ya existe un usuario con el correo que ha proporcionado en el formulario" } );
                 }
                 else{
-                    this.setState({mensajeError: "No se ha podido crear el usuario"})
+                    this.setState( { mensajeError: "No se ha podido crear el usuario" } );
                 }
                 
-                this.setState({mostrarMensajeError: true})
+                this.setState( { mostrarMensajeError: true } );
             }
         }
     }
@@ -127,7 +129,7 @@ class Registro extends Component{
                         </Button>               
                 </Form>
             </>
-        )
+        );
     }
 }
 

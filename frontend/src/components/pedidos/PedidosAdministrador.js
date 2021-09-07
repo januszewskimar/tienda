@@ -1,17 +1,16 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Form from 'react-bootstrap/Form'
-import Modal from 'react-bootstrap/Modal'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
@@ -19,7 +18,8 @@ import axiosInstance from "../axiosApi";
 class PedidosAdministrador extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
+
         this.state = {
             pedidos: null,
             pedidosFiltrados: [],
@@ -34,52 +34,57 @@ class PedidosAdministrador extends Component {
             filtroCliente: "",
             filtroFechaDesde: "",
             filtroFechaHasta: ""
-        }
+        };
     }
 
     componentDidMount(){
+        this.actualizarPedidos();
+    }
+
+    actualizarPedidos = () => {
         axiosInstance.get('/pedidos/')
         .then( result => {
-             this.setState( { pedidos: result.data } )
+             this.setState( { pedidos: result.data } );
          }).catch (error => {
              console.log(error);
          })
     }
 
-    handleChangeEstado(event, id) {
-        let estados = this.state.estados
-        estados[id] = event.target.value
-        this.setState({estados: estados});
+    handleChangeEstado = (event, id) => {
+        let estados = this.state.estados;
+        estados[id] = event.target.value;
+        this.setState( { estados: estados } );
     }
 
-    handleSubmitEstado(event, id){
+    handleSubmitEstado = (event, id) => {
         event.preventDefault();
 
-
         if (this.state.estados[id] === null || this.state.estados[id] === undefined){
-            this.setState( { mostrarMensajeErrorEstado: true, mensajeErrorEstado: "Tiene que seleccionar un estado." } )
+            this.setState( { mostrarMensajeErrorEstado: true,
+                             mensajeErrorEstado: "Tiene que seleccionar un estado." } );
         }
         else{
             axiosInstance.patch('/pedidos/' + id, { estado: this.state.estados[id] })
-            .then( result => {
+            .then( () => {
                     this.setState( { mostrarMensajeExitoEstado: true  } )
-                    this.actualizarPedidos()
-                }).catch (error => {
-                    this.setState( { mostrarMensajeErrorEstado: true, mensajeErrorEstado: "No se ha podido cambiar el estado." } )
+                    this.actualizarPedidos();
+                }).catch ( () => {
+                    this.setState( { mostrarMensajeErrorEstado: true,
+                                     mensajeErrorEstado: "No se ha podido cambiar el estado." } );
                 })
         }
     }
 
     cerrarMensajeErrorEstado = () => {
-        this.setState( { mostrarMensajeErrorEstado: false, mensajeErrorEstado: "" } )
+        this.setState( { mostrarMensajeErrorEstado: false, mensajeErrorEstado: "" } );
     }
 
     cerrarMensajeExitoEstado = () => {
-        this.setState( { mostrarMensajeExitoEstado: false } )
+        this.setState( { mostrarMensajeExitoEstado: false } );
     }
 
     handleChangeFiltroEstado = (event) => {
-        this.setState( { filtroEstado: event.target.value } )
+        this.setState( { filtroEstado: event.target.value } );
     }
 
     filtrarEstado = (pedidos) => {
@@ -98,7 +103,7 @@ class PedidosAdministrador extends Component {
     }
 
     handleChangeFiltroCliente = (event) => {
-        this.setState( { filtroCliente: event.target.value.toLowerCase() } )
+        this.setState( { filtroCliente: event.target.value.toLowerCase() } );
     }
 
     filtrarCliente = (pedidos) => {
@@ -109,13 +114,13 @@ class PedidosAdministrador extends Component {
             let p = [];
             for (let i = 0 ; i < pedidos.length ; i++){
                 let cont = true;
-                let usuario
+                let usuario;
                 for (let j = 0 ; cont && j < this.props.usuarios.length ; j++){
                     if (this.props.usuarios[j]['id'] === pedidos[i]['usuario']){
                         cont = false;
-                        usuario = this.props.usuarios[j]
+                        usuario = this.props.usuarios[j];
                         let nombre = usuario['first_name'] + ' ' + usuario['last_name'];
-                        nombre = nombre.toLowerCase()
+                        nombre = nombre.toLowerCase();
                         if (usuario['email'].toLowerCase().includes(this.state.filtroCliente) ||
                             nombre.includes(this.state.filtroCliente)){
                                 p.push(pedidos[i]);
@@ -128,11 +133,11 @@ class PedidosAdministrador extends Component {
     }
 
     handleChangeFiltroFechaDesde = (event) => {
-        this.setState( { filtroFechaDesde: event.target.value } )
+        this.setState( { filtroFechaDesde: event.target.value } );
     }
 
     handleChangeFiltroFechaHasta = (event) => {
-        this.setState( { filtroFechaHasta: event.target.value } )
+        this.setState( { filtroFechaHasta: event.target.value } );
     }
 
     filtrarFechaDesde = (pedidos) => {
@@ -144,7 +149,7 @@ class PedidosAdministrador extends Component {
 
         let p = [];
         for (let i = 0 ; i < pedidos.length ; i++){
-            let fecha = new Date(pedidos[i]['fecha'])
+            let fecha = new Date(pedidos[i]['fecha']);
             if (fecha >= fechaDesde){
                 p.push(pedidos[i]);
             }
@@ -174,50 +179,55 @@ class PedidosAdministrador extends Component {
     }
 
     restablecerFiltros = () => {
-        this.setState( { filtroEstado: "Todos", filtroCliente: "", filtroFechaDesde: "", filtroFechaHasta: ""} );
+        this.setState( { filtroEstado: "Todos",
+                         filtroCliente: "",
+                         filtroFechaDesde: "",
+                         filtroFechaHasta: "" } );
     }
 
     ocultarModalEliminar = () => {
-        this.setState({modalEliminarVisible: false, pedidoAEliminar: null})
+        this.setState({modalEliminarVisible: false, pedidoAEliminar: null});
     }
 
     mostrarModalEliminar = (id) => {
-        this.setState({modalEliminarVisible: true, pedidoAEliminar: id})
+        this.setState({modalEliminarVisible: true, pedidoAEliminar: id});
     }
 
     eliminarPedido = () => {
         axiosInstance.delete('/pedidos/' + this.state.pedidoAEliminar)
-        .then( result => {
+        .then( () => {
                 this.actualizarPedidos();
                 this.ocultarModalEliminar();
             }).catch (error => {
-                console.log(error)
+                console.log(error);
             })
     }
 
+
+
     render() {
-        if (this.state.pedidos === null){
+        if (this.state.pedidos === null || this.props.catalogo === null){
             return null;
         }
 
-        let pedidosFiltrados = this.state.pedidos
-        pedidosFiltrados = this.filtrarEstado(pedidosFiltrados)
-        pedidosFiltrados = this.filtrarCliente(pedidosFiltrados)
-        pedidosFiltrados = this.filtrarFechaDesde(pedidosFiltrados)
-        pedidosFiltrados = this.filtrarFechaHasta(pedidosFiltrados)
+        let pedidosFiltrados = this.state.pedidos;
+        pedidosFiltrados = this.filtrarEstado(pedidosFiltrados);
+        pedidosFiltrados = this.filtrarCliente(pedidosFiltrados);
+        pedidosFiltrados = this.filtrarFechaDesde(pedidosFiltrados);
+        pedidosFiltrados = this.filtrarFechaHasta(pedidosFiltrados);
 
         let pedidos = pedidosFiltrados.map(elemento => {
-            let fecha = new Date(elemento.fecha)
-            fecha = fecha.toLocaleString()
+            let fecha = new Date(elemento.fecha);
+            fecha = fecha.toLocaleString();
 
-            let importeTotal = 0
+            let importeTotal = 0;
             let productos = elemento.productos.map((e) => {
-                let producto
-                let cont = true
+                let producto;
+                let cont = true;
                 for (let i = 0 ; cont && i < this.props.catalogo.length ; i++){
                     if (parseInt(this.props.catalogo[i].id) === parseInt(e.producto)){
-                        producto = this.props.catalogo[i]
-                        cont = false
+                        producto = this.props.catalogo[i];
+                        cont = false;
                     }
                 }
 
@@ -225,7 +235,7 @@ class PedidosAdministrador extends Component {
                     producto = null;
                 }
     
-                importeTotal += e.precio * e.cantidad
+                importeTotal += e.precio * e.cantidad;
     
                 if (producto !== null){
                     return  (<ListGroup.Item>
@@ -267,15 +277,15 @@ class PedidosAdministrador extends Component {
                                 </Row>
                             </ListGroup.Item>)
                 }
-            })
-            let dir
-            let es_tienda = false
+            });
+            let dir;
+            let es_tienda = false;
             if ("tienda" in elemento){
-                let cont = true
+                let cont = true;
                 for (let i = 0 ; cont && i < this.props.tiendas.length ; i++){
                     if (parseInt(elemento['tienda']) === parseInt(this.props.tiendas[i]['id'])){
-                        dir = this.props.tiendas[i]['direccion']
-                        cont = false
+                        dir = this.props.tiendas[i]['direccion'];
+                        cont = false;
                     }
                 }
                 if (cont === true){
@@ -284,7 +294,7 @@ class PedidosAdministrador extends Component {
                 }
             }
             else{
-                dir = elemento['direccion']
+                dir = elemento['direccion'];
             }
             
             let direccion;
@@ -306,17 +316,17 @@ class PedidosAdministrador extends Component {
                 }
             }
 
-            let usuario
-            let cont = true
+            let usuario;
+            let cont = true;
             for (let i = 0 ; cont && i < this.props.usuarios.length ; i++){
                 if (parseInt(elemento['usuario']) === parseInt(this.props.usuarios[i]['id'])){
-                    usuario = this.props.usuarios[i]
-                    cont = false
+                    usuario = this.props.usuarios[i];
+                    cont = false;
                 }
             }
 
             if (cont === true){
-                usuario = null
+                usuario = null;
             }
 
             return(
@@ -403,7 +413,7 @@ class PedidosAdministrador extends Component {
                         </Card.Body>
                     </Accordion.Collapse>
                 </Card>
-        )})
+        )});
         
 
         return (
@@ -486,11 +496,11 @@ class PedidosAdministrador extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Eliminar el pedido</Modal.Title>
                     </Modal.Header>
-                                    
+
                     <Modal.Body>
                         <p>¿Está seguro de que quiere eliminar el pedido?</p>
                     </Modal.Body>
-                                    
+
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.ocultarModalEliminar}>No</Button>
                         <Button variant="danger" onClick={this.eliminarPedido}>Sí</Button>

@@ -1,22 +1,27 @@
-import React, { Component } from "react";
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import Modal from 'react-bootstrap/Modal'
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import axiosInstance from "../axiosApi";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+
+import listaPaises from '../utils/ListaPaises'
+
+import axiosInstance from '../../axiosApi';
 
 
 
 class RealizarPedido extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             tipo_entrega: null,
             tienda: null,
 
-            destinatario: this.props.usuarioLogueado.first_name + " " + this.props.usuarioLogueado.last_name,
+            destinatario: this.props.usuarioLogueado.first_name +
+                          " " +
+                          this.props.usuarioLogueado.last_name,
             direccion: "",
             localidad: "",
             provincia: "",
@@ -31,7 +36,7 @@ class RealizarPedido extends Component {
             mostrarMensajeExito: false,
 
             codigo_recogida: ""
-        }
+        };
     }
 
     handleChange = (event) => {
@@ -47,62 +52,58 @@ class RealizarPedido extends Component {
     }
 
     handleSeleccionTienda = (event) => {
-        console.log(event)
         this.setState( { tienda: event.target.value } );
     }
-
-    listaPaises(){
-        let lista = ['España', 'Alemania', 'Austria', 'Bélgica', 'Bulgaria', 'Chequia', 'Chipre', 'Croacia', 'Dinamarca', 'Eslovaquia', 'Eslovenia',
-                 'Estonia', 'Finlandia', 'Francia', 'Grecia', 'Hungría', 'Irlanda', 'Italia', 'Letonia', 'Lituania', 'Luxemburgo',
-                 'Malta', 'Países Bajos', 'Polonia', 'Portugal', 'Rumanía', 'Suecia']
-        return lista
-    }
-    r
+    
     cerrarMensajeError = () => {
-        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } );
     }
 
     cerrarMensajeExito = () => {
-        this.setState( { mostrarMensajeError: false } )
-        this.props.history.push('/')
+        this.setState( { mostrarMensajeError: false } );
+        this.props.history.push('/');
     }
 
     handleSubmit = async (event) => {
         event.preventDefault();
-        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } );
 
         let error = false
 
         if (this.state.tipo_entrega === "entregaPostal"){
             if (this.state.pais === "España" && this.state.provincia === ""){
-                this.setState( { mostrarMensajeError: true, mensajeError: "Es necesario rellenar el campo de provincia en caso de una dirección en España." } )
-                error = true
+                this.setState( { mostrarMensajeError: true,
+                                 mensajeError: "Es necesario rellenar el campo de provincia en caso de una dirección en España." } );
+                error = true;
             }
-            else if (this.state.pais === "España" && (this.state.codigo_postal.length !== 5 || /^\d+$/.test(this.state.codigo_postal) === false)){
-                this.setState( { mostrarMensajeError: true, mensajeError: "El código postal es incorrecto." } )
-                error = true
+            else if (this.state.pais === "España" &&
+                     (this.state.codigo_postal.length !== 5 || /^\d+$/.test(this.state.codigo_postal) === false)){
+                this.setState( { mostrarMensajeError: true,
+                                 mensajeError: "El código postal es incorrecto." } );
+                error = true;
             }
         }
         else{
             if (this.state.tienda === null){
-                this.setState( { mostrarMensajeError: true, mensajeError: "Es necesario seleccionar una tienda" } )
-                error = true
+                this.setState( { mostrarMensajeError: true,
+                                 mensajeError: "Es necesario seleccionar una tienda" } );
+                error = true;
 
             }
         }
 
         if (!error){
             try {
-                let productos = []
+                let productos = [];
 
                 Object.entries(this.props.carrito).forEach(([key, value]) => {
-                    productos.push({ producto: key, cantidad: value })
+                    productos.push( { producto: key, cantidad: value } );
                 })
 
-                let datos = { productos: productos }
+                let datos = { productos: productos };
 
                 if (this.state.nota !== ""){
-                    datos.nota = this.state.nota
+                    datos.nota = this.state.nota;
                 }
                 
                 if (this.state.tipo_entrega === "entregaPostal"){
@@ -111,48 +112,50 @@ class RealizarPedido extends Component {
                                         localidad: this.state.localidad,
                                         codigo_postal: this.state.codigo_postal,
                                         pais: this.state.pais
-                    }
+                                      };
                     if (this.state.provincia !== ""){
                         datos.direccion.provincia = this.state.provincia;
                     }
                 }
                 else{
-                    datos.tienda = this.state.tienda
+                    datos.tienda = this.state.tienda;
                 }
 
                 const result = await axiosInstance.post('/pedidos/', datos);
                 if (this.state.tipo_entrega === "entregaTienda"){
-                    this.setState( { codigo_recogida: result.data['codigo_recogida'] } )
+                    this.setState( { codigo_recogida: result.data['codigo_recogida'] } );
                 }
-                this.setState( { mostrarMensajeExito: true } )
-                this.props.setCarrito( { } )
-                this.props.actualizarCatalogo()
+                this.setState( { mostrarMensajeExito: true } );
+                this.props.setCarrito( { } );
+                this.props.actualizarCatalogo();
 
             } catch (error) {
                 if (error.response){
                     if (error.response.status === 409){
-                        this.setState( { mensajeError: "No hay unidades disponibles de un producto para poder realizar este pedido." } )    
+                        this.setState( { mensajeError: "No hay unidades disponibles de un producto para poder realizar este pedido." } );
                     }
                     else{
-                        this.setState( { mmensajeError: "No se ha podido realizar el pedido." } )   
+                        this.setState( { mensajeError: "No se ha podido realizar el pedido." } );
                     } 
                 }
                 else{
-                    console.log(error)
+                    console.log(error);
                 }
-                this.setState( { mostrarMensajeError: true } )
+                this.setState( { mostrarMensajeError: true } );
             }
         }
     }
 
+
+    
     render() {
         if (this.props.tiendas === null){
             return null;
         }
 
-        let paises = this.listaPaises()
+        let paises = listaPaises();
 
-        let formulario
+        let formulario;
         
         if (this.state.tipo_entrega === "entregaTienda"){
             formulario =    <>
@@ -162,7 +165,13 @@ class RealizarPedido extends Component {
                                     <option disabled hidden selected value>Elegir una tienda de la lista</option>
                                     { this.props.tiendas.map((elemento) => 
                                         <option value={ elemento.id }>
-                                            { elemento.nombre } - { elemento.direccion.localidad } - { (elemento.direccion.provincia !== null ? (elemento.direccion.provincia + " - ") : null ) } { elemento.direccion.pais }
+                                            { elemento.nombre } -
+                                            { elemento.direccion.localidad } -
+                                            { (elemento.direccion.provincia !== null ?
+                                                (elemento.direccion.provincia + " - ")
+                                                : null )
+                                            }
+                                            { elemento.direccion.pais }
                                         </option>
                                       )
                                     }

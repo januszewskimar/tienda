@@ -1,28 +1,29 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button'
-import Col from 'react-bootstrap/Col'
-import Card from 'react-bootstrap/Card'
-import Form from 'react-bootstrap/Form'
+import { React, Component } from 'react';
+import { Link } from 'react-router-dom';
+
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
 
 
 
 class Catalogo extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
 
-        this.state = { filtroNombre: "" }
+        this.state = { filtroNombre: "" };
     }
 
     handleChangeFiltroNombre = (event) => {
-        this.setState( { filtroNombre: event.target.value } )
+        this.setState( { filtroNombre: event.target.value } );
     }
 
     filtrarNombre = (productos) => {
         if (this.state.filtroNombre === ""){
-            return productos
+            return productos;
         }
 
         let p = [];
@@ -34,22 +35,24 @@ class Catalogo extends Component {
         return p;
     }
 
+    
+
     render() {
 
-        if (this.props.catalogo === null){        
+        if (this.props.catalogo === null){
             return null;
         }
 
-        let productos
+        let productos;
 
-        let productosFiltrados = this.props.catalogo
-        productosFiltrados = this.filtrarNombre(productosFiltrados)
+        let productosFiltrados = this.props.catalogo;
+        productosFiltrados = this.filtrarNombre(productosFiltrados);
 
-        if (productosFiltrados.length != 0){
-           let arrays = [], tamanio = 3
+        if (productosFiltrados.length !== 0){
+           let arrays = [], tamanio = 3;
 
             for (let i = 0 ; i < productosFiltrados.length ; i += tamanio){
-                arrays.push(productosFiltrados.slice(i, i + tamanio))
+                arrays.push(productosFiltrados.slice(i, i + tamanio));
             }
 
                 productos = arrays.map(grupo => (
@@ -58,7 +61,8 @@ class Catalogo extends Component {
                         grupo.map(elemento => (
                             <Col className="d-flex justify-content-center">
                                 <Card className="text-center" style={{ width: '20rem' }}>
-                                    <Card.Img variant="top" src={"http://localhost:8000" + elemento.imagen} width="200" height="200" />
+                                    <Card.Img variant="top" src={"http://localhost:8000" + elemento.imagen}
+                                              width="200" height="200" />
                                     <Card.Body>
                                         <Card.Title>{ elemento.nombre }</Card.Title>
                                         <Card.Text>

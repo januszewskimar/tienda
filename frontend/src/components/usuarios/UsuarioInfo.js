@@ -1,13 +1,13 @@
-import React, { Component} from "react";
-import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
+import { React, Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import axiosInstance from "../axiosApi";
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+
+import axiosInstance from '../../axiosApi';
 
 
 
@@ -18,28 +18,30 @@ class UsuarioInfo extends Component {
         super(props);
         this.state = {
             mostrarModalEliminar: false
-        }
+        };
     }
 
     ocultarModalEliminar = () => {
-        this.setState({mostrarModalEliminar: false})
+        this.setState( { mostrarModalEliminar: false } );
     }
 
     mostrarModalEliminar = () => {
-        this.setState({mostrarModalEliminar: true})
+        this.setState( { mostrarModalEliminar: true } );
     }
 
     eliminarUsuario = () => {
         axiosInstance.delete('/usuarios/' + this.props.usuarioLogueado['id']).then(
-            result => {
-                this.props.actualizarUsuarioLogueado()
-                this.props.history.push('/')
+            () => {
+                this.props.actualizarUsuarioLogueado();
+                this.props.history.push('/');
             }
         ).catch (error => {
-            console.log(error)
-        })
+            console.log(error);
+        });
     }
 
+
+    
     render() {
 
         return (

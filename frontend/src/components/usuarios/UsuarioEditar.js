@@ -1,14 +1,17 @@
-import React, { Component} from "react";
-import { withRouter } from "react-router-dom";
-import axiosInstance from "../axiosApi";
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
+import { React, Component } from 'react';
+import { withRouter } from 'react-router-dom';
+
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+
+import axiosInstance from '../../axiosApi';
 
 
 class UsuarioEditar extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             id: this.props.usuarioLogueado['id'],
             correo: this.props.usuarioLogueado['email'],
@@ -17,39 +20,38 @@ class UsuarioEditar extends Component {
             mostrarMensajeError: false,
             mensajeError: ""
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
     }
 
 
-    handleSubmit(event){
-        event.preventDefault()
-        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
+    handleSubmit = (event) => {
+        event.preventDefault();
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } );
         axiosInstance.patch('/usuarios/' + this.state.id, {
             email: this.state.correo,
             first_name: this.state.nombre,
             last_name: this.state.apellidos,
         }).then(
-            result => {
-                this.props.actualizarUsuarioLogueado()
-                this.props.history.push('/usuario/info')
+            () => {
+                this.props.actualizarUsuarioLogueado();
+                this.props.history.push('/usuario/info');
             }
         ).catch (error => {
             if (error.response.status === 409){
-                this.setState( { mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" } )
+                this.setState( { mensajeError: "Ya existe una cuenta con el correo que ha proporcionado" } );
             }
             else{
-                this.setState( { mensajeError: "" } )
+                this.setState( { mensajeError: "" } );
             }
-            this.setState( { mostrarMensajeError: true } )
-        })
+            this.setState( { mostrarMensajeError: true } );
+        });
     }
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
+    handleChange = (event) => {
+        this.setState( { [event.target.name]: event.target.value } );
     }
 
+
+    
     render() {
 
         return (

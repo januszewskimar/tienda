@@ -1,43 +1,40 @@
-import React, { Component } from "react";
+import { React, Component } from 'react';
+import { withRouter } from 'react-router-dom';
+
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Alert from 'react-bootstrap/Alert'
-import { withRouter } from "react-router-dom";
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
 class AniadirProducto extends Component {
 
     constructor(props){
-        super(props)
-        this.state = {
-            nombre: "",
-            descripcion: "",
-            precio: "",
-            unidades_disponibles: "",
-            imagen: "",
+        super(props);
 
-            mostrarMensajeError: "",
-            mensajeError: ""
-        }
-        this.handleChange = this.handleChange.bind(this);
-        this.handleChangeImagen = this.handleChangeImagen.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = { nombre: "",
+                       descripcion: "",
+                       precio: "",
+                       unidades_disponibles: "",
+                       imagen: "",
+
+                       mostrarMensajeError: "",
+                       mensajeError: "" };
     }
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
+    handleChange = (event) => {
+        this.setState( { [event.target.name]: event.target.value } );
     }
 
-    handleChangeImagen(event) {
+    handleChangeImagen = (event) => {
         this.setState( { imagen: event.target.files[0] } );
     }
 
-    async handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
-        this.setState( { mostrarMensajeError: false, mensajeError: "" } )
+        this.setState( { mostrarMensajeError: false, mensajeError: "" } );
         
         try {
             let datos = new FormData();
@@ -47,15 +44,16 @@ class AniadirProducto extends Component {
             datos.append('unidades_disponibles', this.state.unidades_disponibles);
             datos.append('imagen', this.state.imagen);
 
-            const response = await axiosInstance.post('/productos/', datos);
-            this.props.actualizarCatalogo()
-            this.props.history.push('/catalogo')
+            await axiosInstance.post('/productos/', datos);
+            this.props.actualizarCatalogo();
+            this.props.history.push('/catalogo');
         } catch (error) {
-            this.setState( { mostrarMensajeError: true, mensajeError: ""})    
-            
+            this.setState( { mostrarMensajeError: true, mensajeError: "" } );
         }
     }
 
+
+    
     render() {
 
         return (
@@ -94,8 +92,9 @@ class AniadirProducto extends Component {
 
                     <Form.Group controlId="formUnidadesDisponibles">
                         <Form.Label>Unidades disponibles</Form.Label>
-                        <Form.Control placeholder="Introduzca el número de unidades disponibles" value={this.state.unidades_disponibles} 
-                                      name="unidades_disponibles" onChange={this.handleChange} pattern="^[1-9]\d*$" required />
+                        <Form.Control placeholder="Introduzca el número de unidades disponibles"
+                                      value={this.state.unidades_disponibles} name="unidades_disponibles"
+                                      onChange={this.handleChange} pattern="^[1-9]\d*$" required />
                     </Form.Group>
 
                     <Form.Group controlId="formImagen">
@@ -105,7 +104,7 @@ class AniadirProducto extends Component {
 
                     <Button className="mt-4" variant="primary" type="submit">
                         Añadir
-                    </Button>               
+                    </Button>
                 </Form>
             </>
 

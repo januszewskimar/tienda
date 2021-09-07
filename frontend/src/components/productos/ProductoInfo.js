@@ -1,28 +1,26 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { React, Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Card from 'react-bootstrap/Card'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
-import ToggleButton from 'react-bootstrap/ToggleButton'
-import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert';
 
-import StarOutlineIcon from '@material-ui/icons/StarOutline';
-import StarIcon from '@material-ui/icons/Star';
+import EstrellasValoracionNoEditables from './EstrellasValoracionNoEditables';
+import EstrellasValoracionEditables from './EstrellasValoracionEditables';
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
 class ProductoInfo extends Component{
 
     constructor(props){
-        super(props)
+        super(props);
+
         this.state = {
             id: parseInt(this.props.match.params['id']),
             
@@ -44,185 +42,204 @@ class ProductoInfo extends Component{
 
             modalEliminarOpinionVisible: false,
             opinionAEliminar: null
-        }
+        };
     }
 
     ocultarModalEliminarProducto = () => {
-        this.setState( { modalEliminarProductoVisible: false } )
+        this.setState( { modalEliminarProductoVisible: false } );
     }
 
     mostrarModalEliminarProducto = () => {
-        this.setState( { modalEliminarProductoVisible: true } )
+        this.setState( { modalEliminarProductoVisible: true } );
     }
 
     eliminarProducto = () => {
         axiosInstance.delete('/productos/' + this.props.match.params['id']).then(
-            result => {
-                this.props.actualizarCatalogo()
-                this.props.history.push('/catalogo')
+            () => {
+                this.props.actualizarCatalogo();
+                this.props.history.push('/catalogo');
             }
         ).catch (error => {
-            console.log(error)
-        })
+            console.log(error);
+        });
     }
 
     handleChange = (event) => {
-        this.setState({[event.target.name]: event.target.value});
+        this.setState( { [event.target.name]: event.target.value } );
     }
 
     aniadirAlCarrito = (event) => {
-        event.preventDefault()
-        let carrito = this.props.carrito
-        carrito[this.state.id] = this.state.cantidadCompra
-        this.props.setCarrito(carrito)
+        event.preventDefault();
+        let carrito = this.props.carrito;
+        carrito[this.state.id] = this.state.cantidadCompra;
+        this.props.setCarrito(carrito);
     }
 
     mostrarModalAniadirOpinion = () => {
-        this.setState( { modalAniadirOpinionVisible: true, valoracionNumerica: 0, titulo: "", descripcion: "", mensajeErrorAniadirOpinionVisible: false } )
+        this.setState( { modalAniadirOpinionVisible: true,
+                         valoracionNumerica: 0,
+                         titulo: "",
+                         descripcion: "",
+                         mensajeErrorAniadirOpinionVisible: false } );
     }
 
     ocultarModalAniadirOpinion = () => {
-        this.setState( { modalAniadirOpinionVisible: false, mensajeErrorAniadirOpinionVisible: false } )
+        this.setState( { modalAniadirOpinionVisible: false,
+                         mensajeErrorAniadirOpinionVisible: false } );
     }
 
     setValoracionNumerica = (num) => {
-        this.setState( { valoracionNumerica: num } )
+        this.setState( { valoracionNumerica: num } );
     }
 
     handleGuardarOpinion = (event) => {
-        event.preventDefault()
+        event.preventDefault();
 
         if (this.state.valoracionNumerica === 0){
-            this.setState( { mensajeErrorAniadirOpinionVisible: true, mensajeErrorAniadirOpinion: "Seleccione una valoración numérica." } )
+            this.setState( { mensajeErrorAniadirOpinionVisible: true,
+                             mensajeErrorAniadirOpinion: "Seleccione una valoración numérica." } );
         }
         else{
             let datos = { producto: this.state.id,
                           valoracion_numerica: this.state.valoracionNumerica,
                           titulo: this.state.titulo,
-                          descripcion: this.state.descripcion }
+                          descripcion: this.state.descripcion };
 
             axiosInstance.post('/opiniones/', datos).then(
-                result => {
+                () => {
                     this.props.actualizarCatalogo()
-                    this.setState( { modalAniadirOpinionVisible: false, mensajeErrorAniadirOpinionVisible: false } )
+                    this.setState( { modalAniadirOpinionVisible: false,
+                                     mensajeErrorAniadirOpinionVisible: false } );
                 }
             ).catch (error => {
-                console.log(error)
-                this.setState( { mensajeErrorAniadirOpinionVisible: true, mensajeErrorAniadirOpinion: "No se ha podido añadir la opinión." } )
+                console.log(error);
+                this.setState( { mensajeErrorAniadirOpinionVisible: true,
+                                 mensajeErrorAniadirOpinion: "No se ha podido añadir la opinión." } );
             })
         }
     }
 
     handleChangeTitulo = (event) => {
-        this.setState( { titulo: event.target.value } )
+        this.setState( { titulo: event.target.value } );
     }
 
     handleChangeDescripcion = (event) => {
-        this.setState( { descripcion: event.target.value } )
+        this.setState( { descripcion: event.target.value } );
     }
 
     mostrarModalModificarOpinion = () => {
-        let opinion = this.getOpinionUsuario()
+        let opinion = this.getOpinionUsuario();
 
         this.setState( { modalModificarOpinionVisible: true,
                          valoracionNumerica: opinion['valoracion_numerica'],
                          titulo: opinion['titulo'],
                          descripcion: opinion['descripcion'],
-                         mensajeErrorModificarOpinionVisible: false } )
+                         mensajeErrorModificarOpinionVisible: false } );
     }
 
     ocultarModalModificarOpinion = () => {
-        this.setState( { modalModificarOpinionVisible: false, mensajeErrorModificarOpinionVisible: false } )
+        this.setState( { modalModificarOpinionVisible: false,
+                         mensajeErrorModificarOpinionVisible: false } );
     }
 
     handleModificarOpinion = (event) => {
-        event.preventDefault()
+        event.preventDefault();
 
         let opinion = this.getOpinionUsuario();
 
         if (this.state.valoracionNumerica === 0){
-            this.setState( { mensajeErrorModificarOpinionVisible: true, mensajeErrorModificarOpinion: "Seleccione una valoración numérica." } )
+            this.setState( { mensajeErrorModificarOpinionVisible: true,
+                             mensajeErrorModificarOpinion: "Seleccione una valoración numérica." } );
         }
         else{
             let datos = { producto: this.state.id,
                           valoracion_numerica: this.state.valoracionNumerica,
                           titulo: this.state.titulo,
-                          descripcion: this.state.descripcion }
+                          descripcion: this.state.descripcion };
 
             axiosInstance.patch('/opiniones/' + opinion['id'], datos).then(
-                result => {
+                () => {
                     this.props.actualizarCatalogo()
-                    this.setState( { modalModificarOpinionVisible: false, mensajeErrorModificarOpinionVisible: false } )
+                    this.setState( { modalModificarOpinionVisible: false,
+                                     mensajeErrorModificarOpinionVisible: false } );
                 }
             ).catch (error => {
                 console.log(error)
-                this.setState( { mensajeErrorModificarOpinionVisible: true, mensajeErrorModificarOpinion: "No se ha podido modificar la opinión." } )
+                this.setState( { mensajeErrorModificarOpinionVisible: true,
+                                 mensajeErrorModificarOpinion: "No se ha podido modificar la opinión." } );
             })
         }
     }
 
     getOpinionUsuario = () => {
-        let id = this.state.id
-        let producto
-        let cont = true
+        let id = this.state.id;
+        let producto;
+        let cont = true;
         for (let i = 0 ; cont && i < this.props.catalogo.length ; i++){
             if (this.props.catalogo[i]['id'] === id){
-                producto = this.props.catalogo[i]
-                cont = false
+                producto = this.props.catalogo[i];
+                cont = false;
             }
         }
-        cont = true
-        let opiniones = producto['opiniones']
-        let opinion
+        cont = true;
+        let opiniones = producto['opiniones'];
+        let opinion;
         for (let i = 0 ; cont && i < opiniones.length ; i++){
             if (parseInt(opiniones[i]['usuario']) === parseInt(this.props.usuarioLogueado['id'])){
-                opinion = opiniones[i]
+                opinion = opiniones[i];
             }
         }
-        return opinion
+        return opinion;
     }
 
     mostrarModalEliminarOpinion = (id) => {
-        this.setState( { modalEliminarOpinionVisible: true, opinionAEliminar: id } )
+        this.setState( { modalEliminarOpinionVisible: true,
+                         opinionAEliminar: id } );
     }
 
     ocultarModalEliminarOpinion = () => {
-        this.setState( { modalEliminarOpinionVisible: false, mensajeErrorEliminarOpinionVisible: false, opinionAEliminar: null } )
+        this.setState( { modalEliminarOpinionVisible: false,
+                         mensajeErrorEliminarOpinionVisible: false,
+                         opinionAEliminar: null } );
     }
 
     eliminarOpinion = () => {
         axiosInstance.delete('/opiniones/' + this.state.opinionAEliminar).then(
-            result => {
-                this.props.actualizarCatalogo()
-                this.setState( { modalEliminarOpinionVisible: false, mensajeErrorEliminarOpinionVisible: false } )
+            () => {
+                this.props.actualizarCatalogo();
+                this.setState( { modalEliminarOpinionVisible: false,
+                                 mensajeErrorEliminarOpinionVisible: false } );
             }
         ).catch (error => {
             console.log(error)
-            this.setState( { mensajeErrorEliminarOpinionVisible: true, mensajeErrorEliminarOpinion: "No se ha podido eliminar la opinión." } )
-        })
+            this.setState( { mensajeErrorEliminarOpinionVisible: true,
+                             mensajeErrorEliminarOpinion: "No se ha podido eliminar la opinión." } );
+        });
     }
 
+
+    
     render() {
         if (this.props.catalogo === null){
             return null;
         }
 
-        let id = this.state.id
-        let producto
+        let id = this.state.id;
+        let producto;
         for (let i = 0 ; i < this.props.catalogo.length ; i++){
             if (this.props.catalogo[i]['id'] === id){
-                producto = this.props.catalogo[i]
+                producto = this.props.catalogo[i];
             }
         }
 
-        let fecha_introduccion = new Date(producto.fecha_introduccion)
-        fecha_introduccion = fecha_introduccion.toLocaleString()
+        let fecha_introduccion = new Date(producto.fecha_introduccion);
+        fecha_introduccion = fecha_introduccion.toLocaleString();
 
-        let fecha_modificacion = new Date(producto.fecha_modificacion)
-        fecha_modificacion = fecha_modificacion.toLocaleString()
+        let fecha_modificacion = new Date(producto.fecha_modificacion);
+        fecha_modificacion = fecha_modificacion.toLocaleString();
 
 
-        let botonesAdministrador, areaCompra
+        let botonesAdministrador, areaCompra;
 
         if (this.props.usuarioLogueado['is_staff']){
             botonesAdministrador =  <Row className="mt-4">
@@ -232,7 +249,10 @@ class ProductoInfo extends Component{
                                             </Link>
                                         </Col>
                                         <Col className="col-auto">
-                                            <Button variant="danger" onClick={this.mostrarModalEliminarProducto}>Eliminar producto</Button>
+                                            <Button variant="danger"
+                                                    onClick={this.mostrarModalEliminarProducto}>
+                                                    Eliminar producto
+                                            </Button>
                                         </Col>
                                     </Row>
         }
@@ -244,8 +264,9 @@ class ProductoInfo extends Component{
                                             <Form.Label column lg={2}>Cantidad:</Form.Label>
 
                                             <Col xs={2}>
-                                                <Form.Control name="cantidadCompra" value={this.state.cantidadCompra} type="number"
-                                                            min={1} max={producto.unidades_disponibles} onChange={this.handleChange} />
+                                                <Form.Control name="cantidadCompra" value={this.state.cantidadCompra}
+                                                              type="number" min={1} max={producto.unidades_disponibles}
+                                                              onChange={this.handleChange} />
                                             </Col>
 
                                             <Col>
@@ -261,7 +282,12 @@ class ProductoInfo extends Component{
             else{
                 areaCompra =    <Row className="mt-4">
                                     <Col>
-                                        Ha añadido {this.props.carrito[id] === 1 ? "una unidad" : this.props.carrito[id] + " unidades" } de este producto al <Link to="/carrito/">carrito</Link>.
+                                        Ha añadido
+                                        {this.props.carrito[id] === 1 ?
+                                            " una unidad " 
+                                         : " " + this.props.carrito[id] + " unidades "
+                                        } 
+                                        de este producto al <Link to="/carrito/">carrito</Link>.
                                     </Col>
                                 </Row>
             }
@@ -269,11 +295,11 @@ class ProductoInfo extends Component{
         }
 
         let opiniones = producto['opiniones'].map( elemento =>{
-            let fecha_creacion = new Date(elemento['fecha_creacion'])
-            fecha_creacion = fecha_creacion.toLocaleString()
+            let fecha_creacion = new Date(elemento['fecha_creacion']);
+            fecha_creacion = fecha_creacion.toLocaleString();
 
-            let fecha_modificacion = new Date(elemento['fecha_modificacion'])
-            fecha_modificacion = fecha_modificacion.toLocaleString()
+            let fecha_modificacion = new Date(elemento['fecha_modificacion']);
+            fecha_modificacion = fecha_modificacion.toLocaleString();
             
             return(
             <Row className="mt-4">
@@ -281,32 +307,11 @@ class ProductoInfo extends Component{
                     <Card>
                         <Card.Body>
                             { elemento.usuario === this.props.usuarioLogueado.id ?
-                             <h5 className="mb-3"><mark>Opinión añadida por Usted</mark></h5>
+                                <h5 className="mb-3"><mark>Opinión añadida por Usted</mark></h5>
                              : null}
 
-
-                            { elemento.valoracion_numerica >= 1 ?
-                              <StarIcon/>
-                            : <StarOutlineIcon/>
-                            }
-                            { elemento.valoracion_numerica >= 2 ?
-                              <StarIcon/>
-                            : <StarOutlineIcon/>
-                            }
-                            { elemento.valoracion_numerica >= 3 ?
-                              <StarIcon/>
-                            : <StarOutlineIcon/>
-                            }
-                            { elemento.valoracion_numerica >= 4 ?
-                              <StarIcon/>
-                            : <StarOutlineIcon/>
-                            }
-                            { elemento.valoracion_numerica >= 5 ?
-                              <StarIcon/>
-                            : <StarOutlineIcon/>
-                            }
+                            <EstrellasValoracionNoEditables valoracion={elemento.valoracion_numerica} />
                         
-
                             <Card.Title className="mt-4">{ elemento.titulo }</Card.Title>
 
                             <p className="text-justify">{ elemento.descripcion }</p>
@@ -325,7 +330,8 @@ class ProductoInfo extends Component{
                             { this.props.usuarioLogueado['is_staff'] ?
                                 <Row>
                                     <Col>
-                                        <Button variant="danger" className="mt-4" onClick={() => this.mostrarModalEliminarOpinion(elemento['id'])}>
+                                        <Button variant="danger" className="mt-4"
+                                                onClick={() => this.mostrarModalEliminarOpinion(elemento['id'])}>
                                             Eliminar opinión
                                         </Button>
                                     </Col>
@@ -340,53 +346,30 @@ class ProductoInfo extends Component{
             </Row>
         )})
         
-        let haPublicadoOpinion = false
+        let haPublicadoOpinion = false;
         let opinionUsuario = this.getOpinionUsuario();
-        let cont = true
+        let cont = true;
         for (let i = 0 ; cont && i < producto['opiniones'].length ; i++){
             if (this.props.usuarioLogueado['id'] === producto['opiniones'][i]['usuario']){
-                haPublicadoOpinion = true
-                cont = false
+                haPublicadoOpinion = true;
+                cont = false;
             }
         }
 
-        let valoracionMedia = 0
-        let suma = 0
+        let valoracionMedia = 0;
+        let suma = 0;
         if (producto['opiniones'].length > 0){
             for (let i = 0 ; i < producto['opiniones'].length ; i++){
-                suma += parseInt(producto['opiniones'][i]['valoracion_numerica'])
+                suma += parseInt(producto['opiniones'][i]['valoracion_numerica']);
             }
-            valoracionMedia = suma / producto['opiniones'].length
+            valoracionMedia = suma / producto['opiniones'].length;
         }
 
         let fragmentoValoracionMedia =  <Row className="mb-5">
                                                 <Col>
                                                     <h3 className="mb-3">Valoración media</h3>
 
-                                                    { valoracionMedia >= 1 ?
-                                                        <StarIcon/>
-                                                    : <StarOutlineIcon/>
-                                                    }
-
-                                                    { valoracionMedia >= 2 ?
-                                                        <StarIcon/>
-                                                    : <StarOutlineIcon/>
-                                                    }
-
-                                                    { valoracionMedia >= 3 ?
-                                                        <StarIcon/>
-                                                    : <StarOutlineIcon/>
-                                                    }
-
-                                                    { valoracionMedia >= 4 ?
-                                                        <StarIcon/>
-                                                    : <StarOutlineIcon/>
-                                                    }
-                                                    
-                                                    { valoracionMedia >= 5 ?
-                                                        <StarIcon/>
-                                                    : <StarOutlineIcon/>
-                                                    }
+                                                    <EstrellasValoracionNoEditables valoracion={valoracionMedia} />
                                             </Col>
                                         </Row>
 
@@ -402,8 +385,7 @@ class ProductoInfo extends Component{
                             <Card.Body>
                                 { producto.opiniones.length > 0 ?
                                   fragmentoValoracionMedia
-                                :
-                                null}     
+                                 : null}     
 
                                 <Card.Title><h3 className="mb-4">Opiniones</h3></Card.Title>
 
@@ -413,15 +395,20 @@ class ProductoInfo extends Component{
                                 :
                                 <Row className="mt-4">
                                         <Col>
-                                            <Button variant="secondary" onClick={this.mostrarModalAniadirOpinion}>Añadir opinión</Button>
+                                            <Button variant="secondary"
+                                                    onClick={this.mostrarModalAniadirOpinion}>
+                                                    Añadir opinión
+                                            </Button>
                                         </Col>
                                 </Row>
                                 }
 
                                 { haPublicadoOpinion ?
                                     <>
-                                        <Button variant="secondary" onClick={this.mostrarModalModificarOpinion}>Modificar mi opinión</Button>
-                                        <Button variant="danger" className="ml-3" onClick={() => this.mostrarModalEliminarOpinion(opinionUsuario['id'])}>
+                                        <Button variant="secondary"
+                                                onClick={this.mostrarModalModificarOpinion}>Modificar mi opinión</Button>
+                                        <Button variant="danger" className="ml-3"
+                                                onClick={() => this.mostrarModalEliminarOpinion(opinionUsuario['id'])}>
                                             Eliminar mi opinión
                                         </Button>
                                     </>
@@ -441,7 +428,6 @@ class ProductoInfo extends Component{
                         <Card className="text-left">
                             <Card.Body>
                                 <Card.Title><h2 className="mb-4">{ producto.nombre }</h2></Card.Title>
-                                <Card.Text>
                                     <Row>
                                         <Col>
                                             <p className="text-justify">{ producto.descripcion }</p>
@@ -476,7 +462,6 @@ class ProductoInfo extends Component{
 
                                     { botonesAdministrador }
 
-                                </Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -513,43 +498,8 @@ class ProductoInfo extends Component{
                             </Row>
                             <Row>
                                 <Col>
-                                    <ToggleButtonGroup type="checkbox" >
-
-                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(1)}>
-                                            { this.state.valoracionNumerica >= 1 ?
-                                            <StarIcon />
-                                            :
-                                            <StarOutlineIcon /> }
-                                        </ToggleButton>
-
-                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(2)}>
-                                        { this.state.valoracionNumerica >= 2 ?
-                                            <StarIcon />
-                                            :
-                                            <StarOutlineIcon /> }                                
-                                        </ToggleButton>
-
-                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(3)}>
-                                        { this.state.valoracionNumerica >= 3 ?
-                                            <StarIcon />
-                                            :
-                                            <StarOutlineIcon /> }                                
-                                        </ToggleButton>
-
-                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(4)}>
-                                        { this.state.valoracionNumerica >= 4 ?
-                                            <StarIcon />
-                                            :
-                                            <StarOutlineIcon /> }                                
-                                        </ToggleButton>
-
-                                        <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(5)}>
-                                        { this.state.valoracionNumerica === 5 ?
-                                            <StarIcon />
-                                            :
-                                            <StarOutlineIcon /> }                                
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
+                                    <EstrellasValoracionEditables valoracion={ this.state.valoracionNumerica }
+                                                                  setValoracion={ (num) => this.setValoracionNumerica(num) } />
                                 </Col>
                             </Row>
                         </Form.Group>
@@ -601,43 +551,8 @@ class ProductoInfo extends Component{
                         </Row>
                         <Row>
                             <Col>
-                                <ToggleButtonGroup type="checkbox" >
-
-                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(1)}>
-                                        { this.state.valoracionNumerica >= 1 ?
-                                        <StarIcon />
-                                        :
-                                        <StarOutlineIcon /> }
-                                    </ToggleButton>
-
-                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(2)}>
-                                    { this.state.valoracionNumerica >= 2 ?
-                                        <StarIcon />
-                                        :
-                                        <StarOutlineIcon /> }                                
-                                    </ToggleButton>
-
-                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(3)}>
-                                    { this.state.valoracionNumerica >= 3 ?
-                                        <StarIcon />
-                                        :
-                                        <StarOutlineIcon /> }                                
-                                    </ToggleButton>
-
-                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(4)}>
-                                    { this.state.valoracionNumerica >= 4 ?
-                                        <StarIcon />
-                                        :
-                                        <StarOutlineIcon /> }                                
-                                    </ToggleButton>
-
-                                    <ToggleButton variant="secondary" onClick={() => this.setValoracionNumerica(5)}>
-                                    { this.state.valoracionNumerica === 5 ?
-                                        <StarIcon />
-                                        :
-                                        <StarOutlineIcon /> }                                
-                                    </ToggleButton>
-                                </ToggleButtonGroup>
+                                <EstrellasValoracionEditables valoracion={ this.state.valoracionNumerica }
+                                                              setValoracion={ (num) => this.setValoracionNumerica(num) } />
                             </Col>
                         </Row>
                     </Form.Group>

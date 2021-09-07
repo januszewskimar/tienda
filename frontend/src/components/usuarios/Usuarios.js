@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import { LinkContainer } from 'react-router-bootstrap'
-import { withRouter } from "react-router-dom";
+import { React, Component } from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
+import { withRouter } from 'react-router-dom';
 
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Table from 'react-bootstrap/Table'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
-import Dropdown from 'react-bootstrap/Dropdown'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Dropdown from 'react-bootstrap/Dropdown';
 
-import axiosInstance from "../axiosApi";
+import axiosInstance from '../../axiosApi';
 
 
 
@@ -18,7 +18,8 @@ import axiosInstance from "../axiosApi";
 class Usuarios extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
+
         this.state = { filtroNombreCorreo: "",
                        filtroTipo: "Cualquier tipo",
             
@@ -27,59 +28,62 @@ class Usuarios extends Component {
 
                        modalErrorEliminarCuentaVisible: false,
                        mensajeErrorEliminarCuenta: "",
-                       modalExitoEliminarCuentaVisible: false }
+                       modalExitoEliminarCuentaVisible: false };
     }
 
     mostrarModalEliminarCuenta = (id) => {
         this.setState( { idUsuarioAEliminar: id,
                          modalEliminarCuentaVisible: true, 
-                        } )
+                        } );
     }
 
     ocultarModalEliminarCuenta = () => {
-        this.setState( { modalEliminarCuentaVisible: false } )
+        this.setState( { modalEliminarCuentaVisible: false } );
     }
 
     ocultarModalExitoEliminarCuenta = () => {
-        this.setState( { modalExitoEliminarCuentaVisible: false } )
+        this.setState( { modalExitoEliminarCuentaVisible: false } );
     }
 
     ocultarModalErrorEliminarCuenta = () => {
-        this.setState( { modalErrorEliminarCuentaVisible: false } )
+        this.setState( { modalErrorEliminarCuentaVisible: false } );
     }
 
     eliminarCuenta = () => {
         axiosInstance.delete('/usuarios/' + this.state.idUsuarioAEliminar).then(
-            result => {
-                this.props.actualizarUsuarios()
-                this.ocultarModalEliminarCuenta()
-                this.setState( { modalExitoEliminarCuentaVisible: true } )
+            () => {
+                this.props.actualizarUsuarios();
+                this.ocultarModalEliminarCuenta();
+                this.setState( { modalExitoEliminarCuentaVisible: true } );
             }
         ).catch (error => {
-            this.setState( { modalErrorEliminarCuentaVisible: true, mensajeErrorEliminarCuenta: "No se ha podido eliminar la cuenta." })
-            console.log(error)
+            this.setState( { modalErrorEliminarCuentaVisible: true,
+                             mensajeErrorEliminarCuenta: "No se ha podido eliminar la cuenta." } );
+            console.log(error);
         })
     }
 
     filtrarNombreCorreo = (usuarios) => {
         if (this.state.filtroNombreCorreo === ""){
-            return usuarios
+            return usuarios;
         }
 
-        let u = []
+        let u = [];
         for (let i = 0 ; i < usuarios.length ; i++){
+
             let nombre = usuarios[i]['first_name'] + ' ' + usuarios[i]['last_name'];
-            nombre = nombre.toLowerCase()
+            nombre = nombre.toLowerCase();
+
             if (nombre.toLowerCase().includes(this.state.filtroNombreCorreo.toLowerCase()) ||
-                usuarios[i]['email'].includes(this.state.filtroNombreCorreo.toLowerCase())){
+                usuarios[i]['email'].includes(this.state.filtroNombreCorreo.toLowerCase())) {
                     u.push(usuarios[i]);
             }
         }
-        return u
+        return u;
     }
 
     handleChangeFiltroNombreCorreo = (event) => {
-        this.setState( { filtroNombreCorreo: event.target.value } )
+        this.setState( { filtroNombreCorreo: event.target.value } );
     }
 
     filtrarTipo = (usuarios) => {
@@ -99,21 +103,23 @@ class Usuarios extends Component {
     }
 
     handleChangeFiltroTipo = (event) => {
-        this.setState( { filtroTipo: event.target.value } )
+        this.setState( { filtroTipo: event.target.value } );
     }
 
     restablecerFiltros = () => {
-        this.setState( { filtroNombreCorreo: "", filtroTipo: "Cualquier tipo" } )
+        this.setState( { filtroNombreCorreo: "", filtroTipo: "Cualquier tipo" } );
     }
 
+
+    
     render() {
         if (this.props.usuarios === null){
             return null;
         }
 
-        let usuariosFiltrados = this.props.usuarios
-        usuariosFiltrados = this.filtrarNombreCorreo(usuariosFiltrados)
-        usuariosFiltrados = this.filtrarTipo(usuariosFiltrados)
+        let usuariosFiltrados = this.props.usuarios;
+        usuariosFiltrados = this.filtrarNombreCorreo(usuariosFiltrados);
+        usuariosFiltrados = this.filtrarTipo(usuariosFiltrados);
 
         let usuarios = usuariosFiltrados.map(elemento => (
             <tr>
@@ -150,7 +156,7 @@ class Usuarios extends Component {
                     </Dropdown>
                 </td>
             </tr>
-        ))
+        ));
 
 
         return (
@@ -214,11 +220,11 @@ class Usuarios extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Eliminar la cuenta</Modal.Title>
                     </Modal.Header>
-                                    
+                    
                     <Modal.Body>
                         <p>¿Está seguro de que quiere eliminar la cuenta?</p>
                     </Modal.Body>
-                                    
+                    
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.ocultarModalEliminarCuenta}>No</Button>
                         <Button variant="danger" onClick={this.eliminarCuenta}>Sí</Button>
@@ -230,11 +236,11 @@ class Usuarios extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Cuenta eliminada</Modal.Title>
                     </Modal.Header>
-                                    
+                    
                     <Modal.Body>
                         <p>La cuenta se ha eliminado correctamente.</p>
                     </Modal.Body>
-                                    
+                    
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.ocultarModalExitoEliminarCuenta}>Cerrar</Button>
                     </Modal.Footer>
@@ -245,11 +251,11 @@ class Usuarios extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Error al eliminar la cuenta</Modal.Title>
                     </Modal.Header>
-                                    
+                    
                     <Modal.Body>
                         <p>{ this.state.mensajeErrorEliminarCuenta }</p>
                     </Modal.Body>
-                                    
+                    
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.ocultarModalErrorEliminarCuenta}>Cerrar</Button>
                     </Modal.Footer>

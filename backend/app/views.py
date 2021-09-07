@@ -17,24 +17,24 @@ from .serializers import SerializadorOpinionProducto, SerializadorPedido, Serial
 class Usuarios(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format='json'):
+    def post(self, request):
         if not request.user.is_staff:
             if 'is_staff' in request.data:
                 if request.data['is_staff']:
                     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        serializador = SerializadorUsuario(data=request.data)
-        if serializador.is_valid():
-            if Usuario.objects.filter(email=serializador.validated_data['email']).count() == 1:
+        if 'email' in request.data:
+            if Usuario.objects.filter(email=request.data['email']).count() == 1:
                 return Response(status=status.HTTP_409_CONFLICT)
-            else:
-                usuario = serializador.save()
-                if usuario:
-                    json = serializador.data
-                    return Response(json, status=status.HTTP_201_CREATED)
+
+        serializador = SerializadorUsuario(data=request.data)
+
+        if serializador.is_valid():
+            serializador.save()
+            return Response(serializador.data, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self,request):
+    def get(self, request):
         if not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
@@ -56,7 +56,7 @@ class UsuariosId(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         if "email" in request.data:
-            if Usuario.email != request.data['email']:
+            if usuario.email != request.data['email']:
                 if Usuario.objects.filter(email=request.data['email']).count() == 1:
                     return Response(status=status.HTTP_409_CONFLICT)
         
@@ -88,14 +88,14 @@ class UsuariosId(APIView):
 class UsuarioSesionIniciada(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, format='json'):
+    def get(self, request):
         serializer = SerializadorUsuario(request.user)
         return Response(serializer.data)
 
 class InvalidarToken(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format='json'):
+    def post(self, request):
         try:
             token_refresco = request.data['refresh_token']
             token = RefreshToken(token_refresco)
@@ -118,7 +118,7 @@ class Productos(APIView):
             return Response(serializador.data, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, format='json'):
+    def get(self, request):
         productos = Producto.objects.all()
         serializador = SerializadorProducto(productos, many=True)
         return Response(serializador.data)
@@ -152,6 +152,7 @@ class ProductosId(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         producto.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -169,12 +170,13 @@ class Tiendas(APIView):
         datos['descripcion'] = datos['descripcion'][0]
 
         serializador = SerializadorTienda(data=datos)
+
         if serializador.is_valid():
             serializador.save()
             return Response(serializador.data, status=status.HTTP_201_CREATED)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, format='json'):
+    def get(self, request):
         tiendas = Tienda.objects.all()
         serializador = SerializadorTienda(tiendas, many=True)
         return Response(serializador.data)
@@ -393,7 +395,6 @@ class OpinionesProducto(APIView):
         if serializador.is_valid():
             serializador.save()
             return Response(serializador.data, status=status.HTTP_201_CREATED)
-        print(serializador.errors)
         return Response(serializador.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
