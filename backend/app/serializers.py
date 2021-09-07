@@ -17,6 +17,12 @@ class SerializadorUsuario(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            password = validated_data.pop('password', None)
+            instance.set_password(password)
+        return super().update(instance, validated_data)
+
 
 class SerializadorProducto(serializers.ModelSerializer):
     class Meta:

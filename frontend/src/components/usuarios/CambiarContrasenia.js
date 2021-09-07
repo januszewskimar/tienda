@@ -34,11 +34,10 @@ class CambiarContrasenia extends Component{
         }
         else{
             try {
-                const response = await axiosInstance.put('/usuarios/' + this.props.usuarioLogueado['id'], {
+                await axiosInstance.patch('/usuarios/' + this.props.usuarioLogueado['id'], {
                     password: this.state.password1
                 });
                 this.props.history.push('/usuario/info');
-                return response;
             } catch (error) {
                 this.setState( { mostrarMensajeError: true,
                                  mensajeError: "No se ha podido cambiar la contraseña" } );
@@ -69,7 +68,7 @@ class CambiarContrasenia extends Component{
                         <Form.Group controlId="formPassword">
                             <Form.Label>Contraseña nueva</Form.Label>
                             <Form.Control type="password" minLength="8" placeholder="Introduzca la contraseña nueva"
-                            value={this.state.password1} name="password1" onChange={this.handleChange} required />
+                                          value={this.state.password1} name="password1" onChange={this.handleChange} required />
                             <Form.Text className="text-muted">
                                 Tiene que ser de al menos 8 carácteres.
                             </Form.Text>
@@ -78,7 +77,7 @@ class CambiarContrasenia extends Component{
                         <Form.Group controlId="formPassword2">
                             <Form.Label>Contraseña nueva (repetir)</Form.Label>
                             <Form.Control type="password" minLength="8" placeholder="Repita la contraseña nueva"
-                            value={this.state.password2} name="password2" onChange={this.handleChange} required />
+                                          value={this.state.password2} name="password2" onChange={this.handleChange} required />
                         </Form.Group>
 
 
