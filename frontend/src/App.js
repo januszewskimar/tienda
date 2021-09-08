@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Cabecera from "./components/Cabecera";
 
+import PaginaPrincipal from './components/PaginaPrincipal';
+
 import Registro from './components/usuarios/Registro';
 import InicioSesion from './components/usuarios/InicioSesion';
 import UsuarioInfo from './components/usuarios/UsuarioInfo';
@@ -139,7 +141,7 @@ class App extends Component {
 
         let usuarioCambiarContraseniaAdmin, usuarioEditarAdmin, usuarioAniadir, usuarios, realizarPedido, carrito, pedidos,
             usuarioInfo, usuarioEditar, cambiarContrasenia, catalogo, productoAniadir, productoInfo, productoEditar, tiendas,
-            tiendaAniadir, tiendaEditar;
+            tiendaAniadir, tiendaEditar, paginaPrincipal;
 
         if (this.state.usuarioLogueado != null){
             usuarioInfo = <UsuarioInfo usuarioLogueado={this.state.usuarioLogueado}
@@ -163,6 +165,8 @@ class App extends Component {
             tiendas = <Tiendas tiendas={this.state.tiendas}
                                actualizarTiendas={this.actualizarTiendas}
                                usuarioLogueado={this.state.usuarioLogueado} />
+
+            paginaPrincipal = catalogo;
 
 
             if (this.state.usuarioLogueado['is_staff']){
@@ -219,6 +223,8 @@ class App extends Component {
             usuarioCambiarContraseniaAdmin = usuarioEditarAdmin = usuarioAniadir 
             = usuarios = pedidos = realizarPedido = carrito = tiendaEditar = tiendaAniadir = tiendas = productoEditar = 
             productoInfo = catalogo = productoAniadir = cambiarContrasenia = usuarioInfo = usuarioEditar = inicioSesion;
+
+            paginaPrincipal = <PaginaPrincipal />
         }
 
         return (
@@ -304,7 +310,9 @@ class App extends Component {
                         { usuarioCambiarContraseniaAdmin }
                     </Route>
 
-                    <Route exact path={"/"} render={() => <h2>Bienvenido a la tienda</h2>}/>
+                    <Route exact path={"/"}>
+                        { paginaPrincipal }
+                    </Route>
                 </Switch>
             </Container>
         </>
