@@ -1,4 +1,5 @@
 import { React, Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -80,7 +81,7 @@ class Registro extends Component{
                     <Alert variant="success">
                         <Alert.Heading>Cuenta creada</Alert.Heading>
                         <p>
-                            A partir de ahora podrá iniciar sesión usando el correo y la contraseña que ha proporcionado.
+                            A partir de ahora podrá <Link to="/inicio-sesion">iniciar sesión</Link> usando el correo y la contraseña que ha proporcionado.
                         </p>
                         </Alert>
                 : null
