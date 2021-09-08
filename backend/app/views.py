@@ -329,16 +329,22 @@ class PedidosUsuarios(APIView):
                 e['direccion'] = Direccion.objects.get(pk=e['direccion_id'])
             except Direccion.DoesNotExist:
                 e['direccion'] = None
-            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
-
+            try:
+                e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+            except Usuario.DoesNotExist:
+                e['usuario'] = None
+        
         for e in pedidos_tienda:
             e['productos'] = ProductoPedido.objects.filter(pedido=e['id'])
             try:
                 e['tienda'] = Tienda.objects.get(pk=e['tienda_id'])
             except Tienda.DoesNotExist:
                 e['tienda'] = None
-            e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
-
+            try:
+                e['usuario'] = Usuario.objects.get(pk=e['usuario_id'])
+            except Usuario.DoesNotExist:
+                e['usuario'] = None
+        
         serializador_pedidos_postales = SerializadorPedidoEntregaPostal(pedidos_postales, many=True)
         serializador_pedidos_tienda = SerializadorPedidoEntregaTienda(pedidos_tienda, many=True)
 
@@ -346,7 +352,7 @@ class PedidosUsuarios(APIView):
 
         pedidos = sorted(pedidos, key=lambda pedido: pedido['fecha'], reverse=True)
 
-        return Response(data=pedidos, status=status.HTTP_201_CREATED)
+        return Response(data=pedidos)
 
 class PedidosId(APIView):
     permission_classes = (permissions.IsAuthenticated,)
