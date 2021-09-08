@@ -257,7 +257,10 @@ class Pedidos(APIView):
             
         for e in request.data['productos']:
             e['pedido'] = pedido.id
-            p = Producto.objects.get(pk=e['producto'])
+            try:
+                p = Producto.objects.get(pk=e['producto'])
+            except Producto.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             e['precio'] = p.precio
             serializador_producto = SerializadorProductoPedido(data=e)
             if not serializador_producto.is_valid():
