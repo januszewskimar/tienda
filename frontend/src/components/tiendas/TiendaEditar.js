@@ -159,6 +159,9 @@ class TiendaEditar extends Component {
                     <Form.Group controlId="formImagen">
                         <Form.Label>Imagen</Form.Label>
                         <Form.File name="imagen" onChange={this.handleChangeImagen} />
+                        <Form.Text className="text-muted">
+                            Si no selecciona una imagen, se mantendrá la actual.
+                        </Form.Text>
                     </Form.Group>
 
 
