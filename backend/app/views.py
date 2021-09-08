@@ -317,7 +317,7 @@ class PedidosUsuarios(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, id):
-        if request.user.id != int(id):
+        if request.user.id != int(id) and not request.user.is_staff:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
         pedidos_postales = list(PedidoEntregaPostal.objects.filter(usuario=request.user.id).values())
