@@ -310,7 +310,7 @@ class Pedidos(APIView):
 
         pedidos = sorted(pedidos, key=lambda pedido: pedido['fecha'], reverse=True)
 
-        return Response(data=pedidos, status=status.HTTP_201_CREATED)
+        return Response(data=pedidos)
 
 
 class PedidosUsuarios(APIView):
